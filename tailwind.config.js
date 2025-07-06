@@ -6,20 +6,21 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#8B0000', // rojo oscuro principal
-          dark: '#5C0000',    // aún más oscuro
-          light: '#B22222',   // rojo fuego
-          soft: '#D46A6A',    // rojo claro suave
+          DEFAULT: '#3CB371', // MediumSeaGreen (verde equilibrado)
+          dark: '#2E8B57',    // SeaGreen (verde elegante)
+          light: '#66CDAA',   // MediumAquamarine
+          soft: '#A8E6CF',    // Verde menta claro
         },
         neutral: {
           white: '#FFFFFF',
-          softWhite: '#F9F9F9',
-          gray: '#DADADA',
-          dark: '#2A2A2A',
+          softWhite: '#FAFAFA',
+          gray: '#E0E0E0',
+          dark: '#333333',
         },
         accent: {
-          gold: '#FFD700', // dorado sutil para detalles
-          rose: '#C71585', // opcional para llamados a la acción
+          lime: '#A3E635',    // acento fresco
+          mint: '#CFFFE5',    // verde muy suave para fondos
+          gold: '#FBBF24',    // amarillo dorado para resaltar
         },
       },
     },

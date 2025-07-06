@@ -141,7 +141,7 @@ const LoginForm = ({ onLoginSuccess }) => {
           placeholder="Usuario"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full px-4 py-2 border border-neutral-gray rounded focus:outline-none focus:ring-2 focus:ring-primary"
           required
         />
         <div className="relative">
@@ -150,13 +150,13 @@ const LoginForm = ({ onLoginSuccess }) => {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
+            className="w-full px-4 py-2 border border-neutral-gray rounded focus:outline-none focus:ring-2 focus:ring-primary pr-10"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray"
             tabIndex={-1}
           >
             {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
@@ -170,10 +170,10 @@ const LoginForm = ({ onLoginSuccess }) => {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="mr-2"
             />
-            <span className="text-sm text-gray-600">Recordarme (7 Días)</span>
+            <span className="text-sm text-neutral-dark">Recordarme (7 Días)</span>
           </label>
           <div
-            className="text-sm text-red-500 hover:underline cursor-pointer"
+            className="text-sm text-primary-light hover:underline cursor-pointer"
             onClick={() => setShowForgotPassword(true)}
           >
             ¿Olvidaste tu contraseña?
@@ -182,8 +182,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full text-white font-semibold py-2 rounded transition ${loading ? 'bg-red-800' : 'bg-red-600 hover:bg-red-700'
-            }`}
+          className={`w-full text-neutral-white font-semibold py-2 rounded transition ${loading ? 'bg-primary-dark' : 'bg-primary hover:bg-primary-dark'}`}
         >
           {loading ? 'Procesando...' : 'Iniciar sesión'}
         </button>
@@ -191,12 +190,12 @@ const LoginForm = ({ onLoginSuccess }) => {
 
       {/* Forgot Password Modal */}
       {showForgotPassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Restablecer Contraseña</h2>
+        <div className="fixed inset-0 bg-neutral-dark bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-neutral-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-6 text-center text-primary">Restablecer Contraseña</h2>
             <form className="space-y-4" onSubmit={handleForgotPassword}>
               <div>
-                <label htmlFor="dni" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="dni" className="block text-sm font-medium text-neutral-dark">
                   Ingresa tu DNI
                 </label>
                 <input
@@ -204,7 +203,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                   id="dni"
                   value={dni}
                   onChange={(e) => setDni(e.target.value)}
-                  className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="mt-1 w-full px-4 py-2 border border-neutral-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="DNI"
                   required
                 />
@@ -212,7 +211,7 @@ const LoginForm = ({ onLoginSuccess }) => {
               <div className="flex justify-between">
                 <button
                   type="button"
-                  className="px-4 py-2 text-sm text-gray-600 hover:underline"
+                  className="px-4 py-2 text-sm text-neutral-dark hover:underline"
                   onClick={() => setShowForgotPassword(false)}
                 >
                   Cancelar
@@ -220,8 +219,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                 <button
                   type="submit"
                   disabled={forgotPasswordLoading}
-                  className={`px-4 py-2 text-white font-semibold rounded transition ${forgotPasswordLoading ? 'bg-red-800' : 'bg-red-600 hover:bg-red-700'
-                    }`}
+                  className={`px-4 py-2 text-neutral-white font-semibold rounded transition ${forgotPasswordLoading ? 'bg-primary-dark' : 'bg-primary hover:bg-primary-dark'}`}
                 >
                   {forgotPasswordLoading ? 'Enviando...' : 'Enviar Correo'}
                 </button>
