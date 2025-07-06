@@ -35,7 +35,7 @@ const LoginCard = ({ children, loginSuccess }) => {
         }}
         className="text-xl font-semibold mb-6 text-gray-800"
       >
-        INICIAR SESIÓN - FIC SULLANA
+        INICIAR SESIÓN - PRESTAMO DEMO
       </motion.h1>
       {children}
       

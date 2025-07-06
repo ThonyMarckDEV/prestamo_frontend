@@ -20,7 +20,7 @@ import {
 export default function Inicio() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl md:text-4xl font-bold text-red-600 mb-8">FicSullana Control Panel</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-red-600 mb-8">PrestamoDemo Control Panel</h1>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl w-full">
         <Link
           to="/admin/calculadora"
