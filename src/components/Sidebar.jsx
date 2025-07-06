@@ -26,7 +26,6 @@ export default function Principal() {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Detectar si es dispositivo móvil o PC
   useEffect(() => {
     const handleResize = () => {
       isMobile.current = window.innerWidth < 768;
@@ -38,14 +37,12 @@ export default function Principal() {
     };
   }, []);
 
-  // Manejar hover en el borde izquierdo (solo para PC)
   useEffect(() => {
     if (!isMobile.current && isHovering) {
       setSidebarOpen(true);
     }
   }, [isHovering]);
 
-  // Close sidebar when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (sidebarRef.current &&
@@ -64,11 +61,10 @@ export default function Principal() {
 
   return (
     <div className="min-h-screen flex relative">
-
-      {/* Hamburger menu button - position fixed to stay on top */}
+      {/* Hamburger menu button */}
       <button
         onClick={toggleSidebar}
-        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-red-600 text-white md:hidden"
+        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-primary text-neutral-white md:hidden"
       >
         {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </button>
@@ -76,7 +72,7 @@ export default function Principal() {
       {/* Overlay cuando el sidebar está abierto */}
       {sidebarOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-10"
+          className="md:hidden fixed inset-0 bg-neutral-dark bg-opacity-50 z-10"
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}
@@ -85,7 +81,7 @@ export default function Principal() {
       <div
         ref={sidebarRef}
         className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 w-64 bg-red-600 text-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
+          } md:translate-x-0 w-64 bg-primary text-neutral-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
         onMouseLeave={() => {
           if (!isMobile.current && isHovering) {
             setSidebarOpen(false);
@@ -93,9 +89,8 @@ export default function Principal() {
           }
         }}
       >
-        {/* Header del sidebar con fondo blanco al 30% de altura */}
-        <div className="h-[30%] bg-white flex flex-col">
-          {/* Contenedor de la imagen centrada */}
+        {/* Header del sidebar */}
+        <div className="h-[30%] bg-neutral-white flex flex-col">
           <div className="flex-1 flex items-center justify-center p-4">
             <img
               src={logo}
@@ -103,10 +98,9 @@ export default function Principal() {
               className="max-w-full max-h-full object-contain"
             />
           </div>
-          {/* Botón de cerrar solo para móviles */}
           <button
             onClick={toggleSidebar}
-            className="absolute top-2 right-2 text-red-600 md:hidden"
+            className="absolute top-2 right-2 text-primary md:hidden"
             aria-label="Cerrar menú"
           >
             <FaTimes size={24} />
@@ -115,88 +109,83 @@ export default function Principal() {
 
         {/* Menú */}
         <nav className="p-4 space-y-6 flex-1">
-          <Link to="/admin/home" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/home" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaHome /> INICIO
           </Link>
-          {/* <Link to="/admin/perfil" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
-            <FaUser /> PERFIL
-          </Link> */}
-          <Link to="/admin/calculadora" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/calculadora" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaCalculator /> REGISTRO DE CRÉDITOS
           </Link>
-          <Link to="/admin/productos" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/productos" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaBoxOpen /> PRODUCTOS
           </Link>
           {/* Sección desplegable: Gestión de Clientes */}
           <div>
             <button
               onClick={() => setGestionClientesOpen(!gestionClientesOpen)}
-              className="flex items-center justify-between w-full text-left gap-3 hover:text-gray-300"
+              className="flex items-center justify-between w-full text-left gap-3 hover:text-neutral-gray"
             >
               <div className="flex items-center gap-3">
                 <FaUsers /> GESTIÓN DE CLIENTES
               </div>
               {gestionClientesOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
             </button>
-
             {gestionClientesOpen && (
               <div className="ml-6 mt-2 flex flex-col space-y-2">
-                <Link to="/admin/clientes" className="hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+                <Link to="/admin/clientes" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
                   REGISTRO DE CLIENTES
                 </Link>
-                <Link to="/admin/asignar-avales" className="hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+                <Link to="/admin/asignar-avales" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
                   ASIGNACIÓN DE AVAL
                 </Link>
               </div>
             )}
           </div>
-          <Link to="/admin/asesores" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/asesores" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaUserTie /> GESTIÓN DE EMPLEADOS
           </Link>
           {/* Sección desplegable: Gestión de Pagos */}
           <div>
             <button
               onClick={() => setGestionPagosOpen(!gestionPagosOpen)}
-              className="flex items-center justify-between w-full text-left gap-3 hover:text-gray-300"
+              className="flex items-center justify-between w-full text-left gap-3 hover:text-neutral-gray"
             >
               <div className="flex items-center gap-3">
                 <FaMoneyBillAlt /> GESTIÓN DE PAGOS
               </div>
               {gestionPagosOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
             </button>
-
             {gestionPagosOpen && (
               <div className="ml-6 mt-2 flex flex-col space-y-2">
-                <Link to="/admin/estados" className="hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+                <Link to="/admin/estados" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
                   <div className="flex items-center gap-2"><FaChartBar /> REGISTRO DE CUOTAS</div>
                 </Link>
-                <Link to="/admin/pagos/filtros" className="hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+                <Link to="/admin/pagos/filtros" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
                   <div className="flex items-center gap-2"><FaFilter /> FILTRAR PAGOS</div>
                 </Link>
               </div>
             )}
           </div>
-          <Link to="/admin/historial-prestamos" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/historial-prestamos" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaClipboardList /> HISTORIAL PRESTAMOS
           </Link>
-          <Link to="/admin/cronograma" className="flex items-center gap-3 hover:text-gray-300" onClick={() => setSidebarOpen(false)}>
+          <Link to="/admin/cronograma" className="flex items-center gap-3 hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
             <FaCalendarAlt /> CRONOGRAMAS
           </Link>
         </nav>
 
-        {/* Logout button en la parte inferior */}
-        <div className="p-4 border-t border-red-700">
+        {/* Logout button */}
+        <div className="p-4 border-t border-primary-dark">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded w-full"
+            className="flex items-center gap-2 bg-primary-light hover:bg-primary-dark text-neutral-white px-4 py-2 rounded w-full"
           >
             <FaSignOutAlt /> CERRAR SESIÓN
           </button>
         </div>
       </div>
 
-      {/* Contenido dinámico - with padding that adjusts based on sidebar visibility */}
-      <div className="flex-1 bg-gray-100 transition-all duration-300 md:ml-64">
+      {/* Contenido dinámico */}
+      <div className="flex-1 bg-neutral-softWhite transition-all duration-300 md:ml-64">
         <div className="p-6 pt-16 md:pt-6">
           <Outlet />
         </div>
@@ -204,21 +193,21 @@ export default function Principal() {
 
       {/* Modal de confirmación */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+        <div className="fixed inset-0 bg-neutral-dark bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-neutral-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-semibold mb-4 text-neutral-dark">
               ¿ESTÁS SEGURO/A DE CERRAR SESIÓN?
             </h3>
             <div className="flex justify-end gap-4">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                className="px-4 py-2 rounded bg-neutral-gray hover:bg-neutral-dark text-neutral-white"
               >
                 NO
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded bg-primary text-neutral-white hover:bg-primary-dark"
               >
                 SÍ
               </button>
