@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { fetchWithAuth } from '../../../../js/authToken';
 import API_BASE_URL from '../../../../js/urlHelper';
-import PaymentReportViewer from './PaymentReportViewer';
+import ReporteFiltroCuotas from './ReporteFiltroCuotas';
 
 const FiltrarPagos = () => {
   const [isGroupSearch, setIsGroupSearch] = useState(false);
@@ -12,6 +12,7 @@ const FiltrarPagos = () => {
   const [endDate, setEndDate] = useState('');
   const [estado, setEstado] = useState('');
   const [selectedAsesor, setSelectedAsesor] = useState('');
+  const [abonadoPor, setAbonadoPor] = useState(''); // New state for abonado_por
   const [groups, setGroups] = useState([]);
   const [asesores, setAsesores] = useState([]);
   const [cuotas, setCuotas] = useState([]);
@@ -40,7 +41,6 @@ const FiltrarPagos = () => {
         });
         if (!asesoresResponse.ok) throw new Error('Error al cargar asesores');
         const asesoresData = await asesoresResponse.json();
-        console.log('Asesores response:', asesoresData);
         const validAsesores = Array.isArray(asesoresData.asesores)
           ? asesoresData.asesores.filter(asesor => asesor && asesor.id && asesor.nombre)
           : [];
@@ -71,10 +71,6 @@ const FiltrarPagos = () => {
       setError('Por favor, selecciona un grupo.');
       return;
     }
-    if (!isGroupSearch && !busquedaCliente) {
-      setError('Por favor, ingrese un criterio de búsqueda para el cliente.');
-      return;
-    }
 
     setError('');
     setCuotas([]);
@@ -88,6 +84,7 @@ const FiltrarPagos = () => {
         ...(isGroupSearch && selectedGroup ? { nombreGrupo: selectedGroup } : {}),
         ...(busquedaCliente ? { busquedaCliente } : {}),
         ...(selectedAsesor ? { idAsesor: parseInt(selectedAsesor, 10) } : {}),
+        ...(abonadoPor ? { abonadoPor } : {}), // Include abonadoPor in payload
       };
 
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/pagos/filtrar`, {
@@ -123,6 +120,7 @@ const FiltrarPagos = () => {
     setEndDate('');
     setEstado('');
     setSelectedAsesor('');
+    setAbonadoPor(''); // Clear abonadoPor filter
     setCuotas([]);
     setError('');
     setShowReportViewer(false);
@@ -184,7 +182,7 @@ const FiltrarPagos = () => {
       </h2>
 
       {showReportViewer && (
-        <PaymentReportViewer
+        <ReporteFiltroCuotas
           key={`report-pagos-${Date.now()}`}
           cuotas={cuotas}
           selectedAsesor={selectedAsesor}
@@ -194,6 +192,7 @@ const FiltrarPagos = () => {
           estado={estado}
           dni={busquedaCliente}
           selectedGroup={selectedGroup}
+          abonadoPor={abonadoPor} // Pass abonadoPor to PaymentReportViewer
           onComplete={handlePDFComplete}
           onPDFGenerated={handlePDFGenerated}
         />
@@ -224,14 +223,14 @@ const FiltrarPagos = () => {
         </div>
       )}
 
-      <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-red-600">
+      <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
             id="groupSearch"
             checked={isGroupSearch}
             onChange={() => setIsGroupSearch(!isGroupSearch)}
-            className="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+            className="h-5 w-5 text-primary-600 focus:ring-primary-600 border-gray-300 rounded"
           />
           <label htmlFor="groupSearch" className="ml-2 text-sm font-medium text-gray-700">
             BUSCAR POR GRUPO
@@ -247,7 +246,7 @@ const FiltrarPagos = () => {
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
               >
                 <option value="">SELECCIONE GRUPO</option>
                 {groups.map(group => (
@@ -267,7 +266,7 @@ const FiltrarPagos = () => {
                 value={busquedaCliente}
                 onChange={(e) => setBusquedaCliente(e.target.value.toUpperCase())}
                 placeholder="DNI, NOMBRE, APELLIDOS O ID CLIENTE"
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
               />
             </div>
           )}
@@ -279,7 +278,7 @@ const FiltrarPagos = () => {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             />
           </div>
           <div>
@@ -290,7 +289,7 @@ const FiltrarPagos = () => {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             />
           </div>
           <div>
@@ -300,7 +299,7 @@ const FiltrarPagos = () => {
             <select
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             >
               <option value="">TODOS</option>
               <option value="pendiente">PENDIENTE</option>
@@ -318,7 +317,7 @@ const FiltrarPagos = () => {
               value={selectedAsesor}
               onChange={(e) => setSelectedAsesor(e.target.value)}
               disabled={loadingAsesores}
-              className={`w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition ${loadingAsesores ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              className={`w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition ${loadingAsesores ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             >
               {loadingAsesores ? (
                 <option value="">CARGANDO...</option>
@@ -334,18 +333,32 @@ const FiltrarPagos = () => {
               )}
             </select>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              ABONADO POR
+            </label>
+            <select
+              value={abonadoPor}
+              onChange={(e) => setAbonadoPor(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
+            >
+              <option value="">TODOS</option>
+              <option value="CUENTA CORRIENTE">CUENTA CORRIENTE</option>
+              <option value="CAJA CHICA">CAJA CHICA</option>
+            </select>
+          </div>
           <div className="md:self-end md:col-span-6 flex flex-col md:flex-row gap-4">
             <button
               onClick={handleFilter}
               disabled={(!startDate || !endDate || (isGroupSearch && !selectedGroup)) || loading}
-              className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
+              className="w-full md:w-auto bg-primary hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
             >
               {loading ? 'Filtrando...' : 'Filtrar'}
             </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="w-full md:w-auto bg-white border border-red-600 text-red-600 hover:bg-red-50 font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
+              className="w-full md:w-auto bg-white border border-primary-600 text-primary-800 hover:bg-primary-100 font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
             >
               LIMPIAR FILTROS
             </button>
@@ -355,7 +368,7 @@ const FiltrarPagos = () => {
 
       {loading && (
         <div className="flex justify-center mb-6">
-          <div className="animate-spin h-8 w-8 border-4 border-red-600 border-t-transparent rounded-full"></div>
+          <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
         </div>
       )}
 
@@ -366,7 +379,7 @@ const FiltrarPagos = () => {
       )}
 
       {cuotas.length > 0 && (
-        <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-yellow-500">
+        <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900">
               PAGOS
@@ -374,7 +387,7 @@ const FiltrarPagos = () => {
             <button
               onClick={handleGeneratePDF}
               disabled={cuotas.length === 0}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="bg-primary hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
               aria-label="Ver reporte de pagos"
             >
               <svg
@@ -403,11 +416,12 @@ const FiltrarPagos = () => {
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="text-left font-medium text-gray-700 bg-gray-50 border-b border-gray-200">
+                  <th className="py-4 px-2">ID PRESTAMO</th>
                   <th className="py-4 px-6">CLIENTE</th>
                   <th className="py-4 px-6">DNI</th>
-                  <th className="py-4 px-2">ID PRESTAMO</th>
                   <th className="py-4 px-2">N° CUOTA</th>
                   <th className="py-4 px-4">VENCIMIENTO</th>
+                  <th className="py-4 px-3">F. PAGO</th>
                   <th className="py-4 px-3">CAPITAL</th>
                   <th className="py-4 px-3">INTERÉS</th>
                   <th className="py-4 px-3">OTROS</th>
@@ -416,6 +430,7 @@ const FiltrarPagos = () => {
                   <th className="py-4 px-6">MORA</th>
                   <th className="py-4 px-6">ESTADO</th>
                   <th className="py-4 px-6">ASESOR</th>
+                  <th className="py-4 px-6">ABONADO POR</th> {/* New column */}
                   <th className="py-4 px-6">OBSERVACIONES</th>
                 </tr>
               </thead>
@@ -432,11 +447,12 @@ const FiltrarPagos = () => {
                       key={cuota.idCuota}
                       className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition"
                     >
+                      <td className="py-4 px-2">{cuota.idPrestamo}</td>
                       <td className="py-4 px-6">{cuota.cliente_nombre}</td>
                       <td className="py-4 px-6">{cuota.cliente_dni}</td>
-                      <td className="py-4 px-2">{cuota.idPrestamo}</td>
                       <td className="py-4 px-1">{cuota.numero_cuota}</td>
                       <td className="py-4 px-4">{formatDate(cuota.fecha_vencimiento)}</td>
+                      <td className="py-4 px-6">{formatDate(cuota.fechaPago)}</td>
                       <td className="py-4 px-3">{parseFloat(cuota.capital).toFixed(2)}</td>
                       <td className="py-4 px-3">{parseFloat(cuota.interes).toFixed(2)}</td>
                       <td className="py-4 px-3">{otros.toFixed(2)}</td>
@@ -458,6 +474,7 @@ const FiltrarPagos = () => {
                         </span>
                       </td>
                       <td className="py-4 px-6">{cuota.asesor_nombre}</td>
+                      <td className="py-4 px-6">{cuota.abonado_por}</td> {/* New column data */}
                       <td className="py-4 px-6">{cuota.observaciones || '-'}</td>
                     </tr>
                   );
@@ -465,7 +482,7 @@ const FiltrarPagos = () => {
               </tbody>
               <tfoot>
                 <tr className="font-semibold text-gray-700 bg-gray-50 border-t border-gray-200">
-                  <td colSpan="5" className="py-4 px-6">
+                  <td colSpan="6" className="py-4 px-6">
                     TOTALES
                   </td>
                   <td className="py-4 px-3">
@@ -490,6 +507,7 @@ const FiltrarPagos = () => {
                     {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.monto), 0).toFixed(2)}
                   </td>
                   <td className="py-4 px-2"></td>
+                  <td className="py-4 px-6"></td>
                   <td className="py-4 px-6"></td>
                   <td className="py-4 px-6"></td>
                   <td className="py-4 px-6"></td>

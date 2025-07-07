@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from 'react-toastify';
 
 const ComprobanteModal = ({
   show,
@@ -8,7 +9,7 @@ const ComprobanteModal = ({
   modalError,
   selectedCuota,
   handleConfirmarPagoPrepagado,
-  loadingComprobante
+  loadingComprobante,
 }) => {
   if (!show) return null;
 
@@ -25,9 +26,7 @@ const ComprobanteModal = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <h3 className="text-xl font-bold mb-4 text-red-700">
-          {modalTitle}
-        </h3>
+        <h3 className="text-xl font-bold mb-4 text-red-700">{modalTitle}</h3>
         {loadingComprobante ? (
           <div className="flex justify-center items-center p-4">
             <div className="animate-spin h-8 w-8 border-4 border-red-600 border-t-transparent rounded-full"></div>
@@ -46,6 +45,10 @@ const ComprobanteModal = ({
                   src={modalContent.comprobanteUrl}
                   title="Comprobante de Pago"
                   className="w-full h-[70vh] border border-gray-200 rounded-lg shadow-sm"
+                  onError={() => {
+                    console.error('Error loading comprobante PDF:', modalContent.comprobanteUrl);
+                    toast.error('No se pudo cargar el comprobante');
+                  }}
                 />
               </div>
             ) : (

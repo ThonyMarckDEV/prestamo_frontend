@@ -107,14 +107,14 @@ const Cronograma = () => {
         </h2>
 
         {/* Search Form */}
-        <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-red-600">
+        <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
           <div className="flex items-center mb-4">
             <input
               type="checkbox"
               id="groupSearch"
               checked={isGroupSearch}
               onChange={() => setIsGroupSearch(!isGroupSearch)}
-              className="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+              className="h-5 w-5 text-red-600 focus:ring-primary-600 border-gray-300 rounded"
             />
             <label htmlFor="groupSearch" className="ml-2 text-sm font-medium text-gray-700">
               BUSCAR POR GRUPO
@@ -131,7 +131,7 @@ const Cronograma = () => {
                   <select
                     value={selectedGroup}
                     onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
                   >
                     <option value="">SELECCIONE EL GRUPO</option>
                     {groups.map(group => (
@@ -145,7 +145,7 @@ const Cronograma = () => {
                   <button
                     onClick={handleSearch}
                     disabled={!selectedGroup || loading}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
+                    className="w-full bg-primary-light hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
                   >
                     {loading ? 'BUSCANDO...' : 'BUSCAR'}
                   </button>
@@ -162,14 +162,14 @@ const Cronograma = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
                     placeholder="INGRESE DNI, ID CLIENTE, NOMBRE O APELLIDOS"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600s transition"
                   />
                 </div>
                 <div className="md:self-end">
                   <button
                     onClick={handleSearch}
                     disabled={!searchTerm || loading}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
+                    className="w-full bg-primary-light hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
                   >
                     {loading ? 'BUSCANDO...' : 'BUSCAR'}
                   </button>
@@ -188,7 +188,7 @@ const Cronograma = () => {
 
         {/* Prestamos Table */}
         {prestamos.length > 0 && (
-          <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-yellow-500">
+          <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">
               PRÉSTAMOS ENCONTRADOS
             </h3>
@@ -229,7 +229,7 @@ const Cronograma = () => {
                             setSelectedPrestamo(prestamo.idPrestamo);
                             handleGenerateCronograma(prestamo.idPrestamo);
                           }}
-                          className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105"
+                          className="bg-primary-light hover:bg-primary-dark text-white text-sm font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105"
                         >
                           VER CRONOGRAMA
                         </button>
@@ -244,7 +244,7 @@ const Cronograma = () => {
 
         {/* Cuotas Table */}
         {cuotas.length > 0 && (
-          <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-red-600">
+          <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">
               CRONOGRAMA DE PAGOS
             </h3>
@@ -254,7 +254,7 @@ const Cronograma = () => {
                   href={pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
+                  className="inline-block bg-primary-light hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
                 >
                   DESCARGAR PDF
                 </a>
@@ -308,6 +308,8 @@ const Cronograma = () => {
                                 ? 'bg-green-100 text-green-800'
                                 : cuota.estado === 'pendiente'
                                 ? 'bg-yellow-100 text-yellow-800'
+                                : cuota.estado === 'prepagado'
+                                ? 'bg-blue-200 text-blue-700'
                                 : 'bg-red-100 text-red-800'}`}
                           >
                             {cuota.estado.charAt(0).toUpperCase() +

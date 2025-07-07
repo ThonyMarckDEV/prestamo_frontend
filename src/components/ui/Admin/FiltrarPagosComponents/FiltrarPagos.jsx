@@ -368,7 +368,7 @@ const FiltrarPagos = () => {
 
       {loading && (
         <div className="flex justify-center mb-6">
-          <div className="animate-spin h-8 w-8 border-4 border-red-600 border-t-transparent rounded-full"></div>
+          <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
         </div>
       )}
 
