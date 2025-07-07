@@ -67,7 +67,7 @@ export default function Principal() {
       {/* Hamburger menu button - position fixed to stay on top */}
       <button 
         onClick={toggleSidebar}
-        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-red-600 text-white md:hidden"
+        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-primary-600 text-white md:hidden"
       >
         {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </button>
@@ -106,7 +106,7 @@ export default function Principal() {
           {/* Botón de cerrar solo para móviles */}
           <button 
             onClick={toggleSidebar} 
-            className="absolute top-2 right-2 text-red-600 md:hidden"
+            className="absolute top-2 right-2 text-primary-600 md:hidden"
             aria-label="Cerrar menú"
           >
             <FaTimes size={24} />
@@ -157,7 +157,7 @@ export default function Principal() {
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-800"
               >
                 SÍ
               </button>
