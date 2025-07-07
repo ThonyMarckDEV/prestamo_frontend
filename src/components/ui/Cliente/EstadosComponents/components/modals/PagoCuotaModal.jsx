@@ -21,7 +21,7 @@ const PagoCuotaModal = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60">
       <div className="bg-white rounded-xl w-11/12 sm:max-w-lg md:max-w-4xl mx-4 max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-2xl">
-        <h3 className="text-xl font-bold mb-4 text-red-600">
+        <h3 className="text-xl font-bold mb-4 text-primary">
           Pagar Cuota #{selectedCuota.numero_cuota}
         </h3>
 
@@ -48,7 +48,7 @@ const PagoCuotaModal = ({
                 name="metodo_pago"
                 value={formData.metodo_pago}
                 onChange={handleInputChange}
-                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-red-300 focus:border-red-600 transition-colors ${errors.metodo_pago ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-100 focus:border-primary-600 transition-colors ${errors.metodo_pago ? 'border-primary-100' : 'border-gray-300'}`}
               >
                 <option value="yape">Yape</option>
                 <option value="deposito">Depósito Bancario</option>
@@ -188,7 +188,7 @@ const PagoCuotaModal = ({
           </button>
           <button
             onClick={() => setShowConfirmationModal(true)}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium py-1.5 px-4 rounded-lg transition-colors"
+            className="bg-primary-light hover:bg-primary-dark text-white font-medium py-1.5 px-4 rounded-lg transition-colors"
           >
             Confirmar Pago
           </button>

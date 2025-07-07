@@ -18,7 +18,7 @@ const PrestamoSelector = ({ prestamos, selectedPrestamoId, onSelectPrestamo }) =
       <select
         value={selectedPrestamoId || ''}
         onChange={(e) => onSelectPrestamo(Number(e.target.value))}
-        className="w-full sm:w-1/2 p-3 border rounded-lg focus:ring-2 focus:ring-red-300 focus:border-red-600 transition-colors border-gray-300"
+        className="w-full sm:w-1/2 p-3 border rounded-lg focus:ring-2 focus:ring-primary-100 focus:border-primary-600 transition-colors border-gray-300"
       >
         {prestamos.map((prestamo) => (
           <option key={prestamo.prestamo.idPrestamo} value={prestamo.prestamo.idPrestamo}>

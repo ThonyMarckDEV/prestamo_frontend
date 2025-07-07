@@ -245,9 +245,9 @@ export default function PagoComponent() {
     <div className="w-full h-full md:min-h-screen overflow-auto pb-16 bg-gray-100">
       {loading && <LoadingScreen />}
 
-      <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 md:p-8 mx-auto w-full max-w-7xl border-t-4 border-red-600">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-red-600 text-center">
-          Mis Pagos
+      <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 md:p-8 mx-auto w-full max-w-7xl border-t-4 border-primary-600">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-primary text-center">
+          PAGAR CUOTAS
         </h2>
 
         <PrestamosList

@@ -83,7 +83,7 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
           <div className="p-6">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
-              <h2 id="modal-title" className="text-xl font-bold text-red-600">
+              <h2 id="modal-title" className="text-xl font-bold text-primary">
                 {modalTitle}
               </h2>
               <button
@@ -100,7 +100,7 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
             {loading && (
               <div className="flex justify-center items-center mb-4">
                 <svg
-                  className="animate-spin h-8 w-8 text-red-600"
+                  className="animate-spin h-8 w-8 text-primary-600"
                   fill="none"
                   viewBox="0 0 24 24"
                 >

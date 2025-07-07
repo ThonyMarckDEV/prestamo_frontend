@@ -16,7 +16,7 @@ const ComprobanteModal = ({ show, onClose, modalTitle, modalContent, modalError 
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <h3 className="text-xl font-bold mb-4 text-red-600">
+        <h3 className="text-xl font-bold mb-4 text-primary">
           {modalTitle}
         </h3>
         {modalError ? (

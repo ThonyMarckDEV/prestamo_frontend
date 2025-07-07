@@ -92,7 +92,7 @@ const CuotasPagadasList = ({ selectedPrestamoId, cuotasPagadas, onViewCaptura, o
                   {cuota.modalidad === 'virtual' && (
                     <button
                       onClick={() => onViewCaptura(cuota.idCuota)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm"
+                      className="bg-accent-yellow-400 hover:bg-accent-yellow-600 text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm"
                       title="Ver Captura de Pago"
                     >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -104,7 +104,7 @@ const CuotasPagadasList = ({ selectedPrestamoId, cuotasPagadas, onViewCaptura, o
                   {cuota.estado === 'pagado' && (
                     <button
                       onClick={() => onViewComprobante(cuota.idCuota)}
-                      className="bg-red-600 hover:bg-red-700 text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm"
+                      className="bg-primary-light hover:bg-primary-dark text-white text-xs py-1 px-3 rounded-full flex items-center shadow-sm"
                       title="Ver Comprobante de Pago"
                     >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

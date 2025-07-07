@@ -5,7 +5,7 @@ const ConfirmationModal = ({ show, onClose, formData, handleConfirm }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60">
       <div className="bg-white rounded-xl w-full max-w-md mx-4 p-6 text-center shadow-2xl">
-        <h3 className="text-lg font-bold mb-4 text-red-600">
+        <h3 className="text-lg font-bold mb-4 text-primary">
           Confirmar Pago de Cuota
         </h3>
         
@@ -23,7 +23,7 @@ const ConfirmationModal = ({ show, onClose, formData, handleConfirm }) => {
           </button>
           <button
             onClick={handleConfirm}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+            className="bg-accent-yellow-400 hover:bg-accent-yellow-600 text-white font-medium py-2 px-6 rounded-lg transition-colors"
           >
             Confirmar
           </button>

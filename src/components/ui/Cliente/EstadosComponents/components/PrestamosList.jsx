@@ -104,13 +104,13 @@ const PrestamosList = ({ cuotasPendientes, handlePagarCuota, handleVerCapturaAbo
             <div className="flex space-x-2">
               <button
                 onClick={() => handleVerCapturaAbono(prestamo)}
-                className="text-xs py-1 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="text-xs py-1 px-3 rounded-full bg-accent-yellow-400 hover:bg-accent-yellow-600 text-white"
               >
                 Ver Abono
               </button>
               <button
                 onClick={() => handleVerCronograma(prestamo)}
-                className="text-xs py-1 px-3 rounded-full bg-red-600 hover:bg-red-700 text-white"
+                className="text-xs py-1 px-3 rounded-full bg-primary-light hover:bg-primary-dark text-white"
               >
                 Ver Cronograma
               </button>
@@ -170,7 +170,7 @@ const PrestamosList = ({ cuotasPendientes, handlePagarCuota, handleVerCapturaAbo
                           onClick={() => handlePagarCuota(prestamo.prestamo, cuota)}
                           className={`text-xs py-1 px-3 rounded-full ${
                             isCuotaPagable(prestamo, cuota)
-                              ? 'bg-red-600 hover:bg-red-700 text-white'
+                              ? 'bg-primary-light hover:bg-primary-dark text-white'
                               : 'bg-gray-400 text-white cursor-not-allowed'
                           }`}
                           disabled={!isCuotaPagable(prestamo, cuota)}
