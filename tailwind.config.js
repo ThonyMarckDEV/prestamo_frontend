@@ -13,6 +13,7 @@ module.exports = {
           600: '#0A2F52',     // Darker for hover states
           800: '#071D33',     // Very dark for text or hover
         },
+        
         neutral: {
           white: '#FFFFFF',
           softWhite: '#F7F9FA',

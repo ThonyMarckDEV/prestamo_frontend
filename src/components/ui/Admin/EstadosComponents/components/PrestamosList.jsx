@@ -76,7 +76,7 @@ const PrestamosList = ({
                   )}
                   <button
                     onClick={() => handleCancelarPrestamo(prestamo)}
-                    className="bg-accent-copper hover:bg-accent-copper-600 text-neutral-dark font-medium text-sm py-1 px-3 rounded-lg shadow-md border border-accent-copper-800"
+                    className="bg-accent-copper hover:bg-accent-copper-600 text-neutral-white font-medium text-sm py-1 px-3 rounded-lg shadow-md"
                   >
                     CANCELAR TOTAL DE PRÉSTAMO
                   </button>
