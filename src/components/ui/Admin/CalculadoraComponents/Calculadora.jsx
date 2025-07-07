@@ -328,16 +328,16 @@ export default function Calculadora() {
     setFormDataList(prev => prev.filter((_, i) => i !== index));
   };
 
-  return (
+    return (
     <div className="w-full h-full md:min-h-screen overflow-auto pb-16">
       {loading && <LoadingScreen />}
-      <div className="bg-white shadow-lg rounded-lg p-3 sm:p-5 md:py-8 mx-auto w-full border-t-4 border-red-600">
-        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-6 text-red-600 text-center">
+      <div className="bg-neutral-softWhite shadow-lg rounded-lg p-3 sm:p-5 md:py-8 mx-auto w-full border-t-4 border-primary">
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-6 text-neutral-dark text-center">
           REGISTRO DE CRÉDITOS
         </h2>
 
         <div className="mb-4 md:mb-6">
-          <div className="flex items-center justify-start bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
+          <div className="flex items-center justify-start bg-neutral-white border border-neutral-gray rounded-xl px-4 py-3 shadow-sm">
             <input
               type="checkbox"
               id="isGroupLoan"
@@ -350,9 +350,9 @@ export default function Calculadora() {
                   setAdvisor(null);
                 }
               }}
-              className="h-5 w-5 text-red-600 focus:ring-2 focus:ring-red-500 border-gray-300 rounded"
+              className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary border-neutral-gray rounded"
             />
-            <span className="ml-3 text-sm sm:text-base font-semibold text-gray-700">
+            <span className="ml-3 text-sm sm:text-base font-semibold text-neutral-dark">
               CRÉDITO GRUPAL
             </span>
             {isGroupLoan && (
@@ -362,10 +362,10 @@ export default function Calculadora() {
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
                   placeholder="Nombre del grupo"
-                  className={`ml-4 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.groupName ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`ml-4 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.groupName ? 'border-primary-800' : 'border-neutral-gray'}`}
                 />
                 {errors.groupName && (
-                  <p className="text-red-500 text-xs mt-1 ml-4">{errors.groupName}</p>
+                  <p className="text-primary-800 text-xs mt-1 ml-4">{errors.groupName}</p>
                 )}
               </>
             )}
@@ -374,7 +374,7 @@ export default function Calculadora() {
 
         {isGroupLoan && (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-neutral-dark">
               ASESOR DEL GRUPO:
             </label>
             <AdvisorSearch
@@ -384,27 +384,27 @@ export default function Calculadora() {
               errors={errors.asesor}
             />
             {errors.asesor && (
-              <p className="text-red-500 text-xs mt-1">{errors.asesor}</p>
+              <p className="text-primary-800 text-xs mt-1">{errors.asesor}</p>
             )}
           </div>
         )}
 
         {formDataList.map((formData, index) => (
-          <div key={formData.id} className="border-b pb-4 mb-4">
+          <div key={formData.id} className="border-b border-neutral-gray pb-4 mb-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Cliente {index + 1}</h3>
+              <h3 className="text-lg font-semibold text-neutral-dark">Cliente {index + 1}</h3>
               {isGroupLoan && formDataList.length > 1 && (
                 <button
                   onClick={() => removeClient(index)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-accent-copper-800 hover:text-accent-copper"
                 >
                   ELIMINAR
                 </button>
               )}
             </div>
             <div className="mb-4">
-              <div className="flex items-center justify-start bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
-                <span className="text-sm sm:text-base font-semibold text-gray-700 mr-3">
+              <div className="flex items-center justify-start bg-neutral-white border border-neutral-gray rounded-xl px-4 py-3 shadow-sm">
+                <span className="text-sm sm:text-base font-semibold text-neutral-dark mr-3">
                   CORRER DÍA:
                 </span>
                 <input
@@ -413,9 +413,9 @@ export default function Calculadora() {
                   name="correrDia"
                   checked={formData.correrDia}
                   onChange={(e) => handleInputChange(index, e)}
-                  className="h-5 w-5 text-red-600 focus:ring-2 focus:ring-red-500 border-gray-300 rounded"
+                  className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary border-neutral-gray rounded"
                 />
-                <span className="ml-4 text-sm text-gray-600">
+                <span className="ml-4 text-sm text-accent-steel">
                   {formData.correrDia ? 'Fecha: Mañana' : 'Fecha: Hoy'} ({formData.fecha})
                 </span>
               </div>
@@ -463,7 +463,7 @@ export default function Calculadora() {
         {isGroupLoan && (
           <button
             onClick={addClient}
-            className="mb-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md text-sm sm:text-base"
+            className="mb-4 bg-accent-copper hover:bg-accent-copper-600 text-neutral-white font-bold py-2 px-4 rounded-lg shadow-md text-sm sm:text-base"
           >
             AGREGAR CLIENTE
           </button>
@@ -472,13 +472,13 @@ export default function Calculadora() {
         <div className="mt-3 md:mt-6 grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
           <button
             onClick={() => handleConfirm('cancelar')}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 md:py-3 px-4 rounded-lg shadow-md text-sm sm:text-base"
+            className="bg-accent-steel hover:bg-accent-steel-600 text-neutral-white font-bold py-2 md:py-3 px-4 rounded-lg shadow-md text-sm sm:text-base"
           >
             CANCELAR
           </button>
           <button
             onClick={() => handleConfirm('guardar')}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 md:py-3 px-4 rounded-lg shadow-md text-sm sm:text-base"
+            className="bg-accent-copper hover:bg-accent-copper-600 text-neutral-white font-bold py-2 md:py-3 px-4 rounded-lg shadow-md text-sm sm:text-base"
           >
             GUARDAR
           </button>

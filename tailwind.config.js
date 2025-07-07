@@ -33,6 +33,16 @@ module.exports = {
             DEFAULT: '#E0F2F1', // Verde menta muy claro
             100: '#F1FAF9',     // Lighter mint for backgrounds
           },
+          yellow: {
+            50: '#FEF9C3',      // Soft, faded yellow (matches yellow-50)
+            100: '#FFFBE6',     // Lighter yellow for subtle backgrounds
+            200: '#FEF08A',     // Light yellow (matches yellow-200)
+            300: '#FDE68A',     // Medium yellow (matches yellow-300)
+            400: '#FACC15',     // Brighter yellow (matches yellow-400)
+            600: '#D97706',     // Darker yellow/copper-like (matches accent.copper.DEFAULT)
+            700: '#B45309',     // Dark yellow (matches yellow-700)
+            800: '#92400E',     // Darker yellow (matches yellow-800)
+          },
         },
       },
     },
