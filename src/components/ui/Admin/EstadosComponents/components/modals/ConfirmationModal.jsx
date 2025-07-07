@@ -42,20 +42,20 @@ const ConfirmationModal = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[60] bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg w-full max-w-md mx-4 p-6 text-center">
-        <h3 className="text-lg font-bold mb-4 text-gray-800">{title}</h3>
-        <p className="text-gray-600 mb-6">{message}</p>
+    <div className="fixed inset-0 flex items-center justify-center z-[60] bg-neutral-dark bg-opacity-50">
+      <div className="bg-neutral-softWhite rounded-lg w-full max-w-md mx-4 p-6 text-center">
+        <h3 className="text-lg font-bold mb-4 text-neutral-dark">{title}</h3>
+        <p className="text-accent-steel mb-6">{message}</p>
         <div className="flex justify-center gap-3">
           <button
             onClick={onClose}
-            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg"
+            className="bg-accent-steel hover:bg-accent-steel-600 text-neutral-white font-bold py-2 px-6 rounded-lg"
           >
             No, Cancelar
           </button>
           <button
             onClick={handleConfirm}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg"
+            className="bg-accent-copper hover:bg-accent-copper-600 text-neutral-white font-bold py-2 px-6 rounded-lg"
           >
             Sí, Confirmar
           </button>

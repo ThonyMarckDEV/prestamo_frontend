@@ -240,7 +240,7 @@ export default function PagoComponent() {
     setLoading(true);
     setModalContent({ capturaUrl: '', comprobanteUrl: '' });
     setModalError('');
-    setModalTitle(`Comprobante de Pago - Cu Eduota #${cuota.numero_cuota}`);
+    setModalTitle(`Comprobante de Pago - Cuota #${cuota.numero_cuota}`);
 
     try {
       const response = await fetchWithAuth(
@@ -747,8 +747,8 @@ export default function PagoComponent() {
     <div className="w-full h-full md:min-h-screen overflow-auto pb-16">
       {loading && <LoadingScreen />}
 
-      <div className="bg-white shadow-lg rounded-lg p-3 sm:p-5 md:py-8 mx-auto w-full border-t-4 border-red-600">
-        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-6 text-red-600 text-center">
+      <div className="bg-neutral-white shadow-lg rounded-lg p-3 sm:p-5 md:py-8 mx-auto w-full border-t-4 border-primary">
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-6 text-primary text-center">
           REGISTRO DE CUOTAS DE PRÉSTAMOS
         </h2>
 
@@ -798,10 +798,10 @@ export default function PagoComponent() {
         modalContent={modalContent}
         modalError={modalError}
         selectedCuota={selectedCuota}
-        selectedCliente={selectedCliente} // Pass selectedCliente
-        selectedPrestamo={selectedPrestamo} // Pass selectedPrestamo
+        selectedCliente={selectedCliente}
+        selectedPrestamo={selectedPrestamo}
         handleConfirmarPagoPrepagado={handleConfirmarPagoPrepagado}
-        handleRechazarPagoPrepagado={handleRechazarPagoPrepagado} // Pass new function
+        handleRechazarPagoPrepagado={handleRechazarPagoPrepagado}
       />
 
       <ComprobanteModal

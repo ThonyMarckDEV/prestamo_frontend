@@ -1,4 +1,3 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -10,6 +9,9 @@ module.exports = {
           dark: '#062A4F',    // Azul más oscuro para headers
           light: '#2A5D8F',   // Azul más claro
           soft: '#E6EEF5',    // Fondo suave azulado
+          100: '#E6F0FA',     // Light blue for backgrounds (e.g., status badges)
+          600: '#0A2F52',     // Darker for hover states
+          800: '#071D33',     // Very dark for text or hover
         },
         neutral: {
           white: '#FFFFFF',
@@ -18,9 +20,19 @@ module.exports = {
           dark: '#1A1A1A',
         },
         accent: {
-          copper: '#D97706',   // Cobrizo/naranja oscuro para botones
-          steel: '#6B7280',    // Gris acero (texto, bordes)
-          mint: '#E0F2F1',     // Verde menta muy claro para resaltar fondos sutiles
+          copper: {
+            DEFAULT: '#D97706', // Cobrizo/naranja oscuro para botones
+            600: '#B35F05',     // Darker copper for hover
+            800: '#8C4A04',     // Darker copper for text
+          },
+          steel: {
+            DEFAULT: '#6B7280', // Gris acero (texto, bordes)
+            600: '#4B5563',     // Darker steel for hover
+          },
+          mint: {
+            DEFAULT: '#E0F2F1', // Verde menta muy claro
+            100: '#F1FAF9',     // Lighter mint for backgrounds
+          },
         },
       },
     },

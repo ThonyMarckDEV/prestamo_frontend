@@ -220,15 +220,15 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
 
   return (
     show && (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-neutral-dark bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-neutral-softWhite rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
           <div className="p-6">
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-red-600">{modalTitle}</h2>
+              <h2 className="text-xl font-bold text-neutral-dark">{modalTitle}</h2>
               <button
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                className="text-accent-steel hover:text-accent-steel-600 text-2xl font-bold"
                 disabled={isUploading || loading}
               >
                 ×
@@ -237,15 +237,15 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
 
             {/* Error Message */}
             {modalError && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                <strong>Error:</strong> {modalError}
+              <div className="mb-4 p-3 bg-primary-100 border border-primary-soft rounded-lg">
+                <strong>Error:</strong> <span className="text-primary-800">{modalError}</span>
               </div>
             )}
 
             {/* Loading State */}
             {loading && (
               <div className="mb-4 flex justify-center items-center">
-                <svg className="animate-spin h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -255,14 +255,14 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
             {/* Image Preview - Only show when not loading */}
             {!loading && previewUrl && (
               <div className="mb-4 relative">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                <h3 className="text-sm font-medium text-neutral-dark mb-2">
                   {selectedFile ? 'Vista previa de la nueva imagen:' : 'Imagen actual:'}
                 </h3>
-                <div className="border rounded-lg overflow-hidden relative">
+                <div className="border border-neutral-gray rounded-lg overflow-hidden relative">
                   <img 
                     src={previewUrl} 
                     alt="Captura de abono" 
-                    className="w-full h-auto max-h-96 object-contain bg-gray-50"
+                    className="w-full h-auto max-h-96 object-contain bg-neutral-white"
                     onError={(e) => {
                       console.error('Error loading image:', previewUrl);
                       e.target.style.display = 'none';
@@ -270,8 +270,8 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
                     }}
                   />
                   {isUploading && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                      <svg className="animate-spin h-8 w-8 text-white" fill="none" viewBox="0 0 24 24">
+                    <div className="absolute inset-0 bg-neutral-dark bg-opacity-50 flex items-center justify-center">
+                      <svg className="animate-spin h-8 w-8 text-neutral-white" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
@@ -284,26 +284,26 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
             {/* File Upload Area - Only show if no existing capture and not loading */}
             {!loading && !modalContent.capturaUrl && (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-neutral-dark mb-2">
                   Seleccionar imagen:
                 </label>
                 <div
                   className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                     isDragging 
-                      ? 'border-blue-400 bg-blue-50' 
-                      : 'border-gray-300 hover:border-gray-400'
+                      ? 'border-primary bg-primary-100' 
+                      : 'border-neutral-gray hover:border-accent-steel'
                   }`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
                   <div className="space-y-2">
-                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="mx-auto h-12 w-12 text-accent-steel" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-accent-steel">
                       <label htmlFor="file-upload" className="cursor-pointer">
-                        <span className="mt-2 block text-sm font-medium text-blue-600 hover:text-blue-500">
+                        <span className="mt-2 block text-sm font-medium text-primary hover:text-primary-600">
                           Haga clic para seleccionar
                         </span>
                         <input
@@ -316,9 +316,9 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
                           disabled={isUploading}
                         />
                       </label>
-                      <p className="text-xs text-gray-500">o arrastre y suelte aquí</p>
+                      <p className="text-xs text-accent-steel">o arrastre y suelte aquí</p>
                     </div>
-                    <p className="text-xs text-gray-500">PNG, JPG, JPEG hasta 2MB</p>
+                    <p className="text-xs text-accent-steel">PNG, JPG, JPEG hasta 2MB</p>
                   </div>
                 </div>
               </div>
@@ -326,11 +326,11 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
 
             {/* File Info */}
             {!loading && selectedFile && (
-              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded">
-                <p className="text-sm text-green-800">
+              <div className="mb-4 p-3 bg-accent-mint-100 border border-accent-mint rounded-lg">
+                <p className="text-sm text-accent-copper-800">
                   <strong>Archivo seleccionado:</strong> {selectedFile.name}
                 </p>
-                <p className="text-sm text-green-600">
+                <p className="text-sm text-accent-copper">
                   Tamaño: {(selectedFile.size / 1024).toFixed(1)} KB
                 </p>
               </div>
@@ -343,7 +343,7 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
                   <button
                     onClick={handleDeleteCapturaAbono}
                     disabled={isUploading}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-primary text-neutral-white px-4 py-2 rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Eliminar Imagen
                   </button>
@@ -352,11 +352,11 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
                     <button
                       onClick={handleUploadCapturaAbono}
                       disabled={isUploading}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                      className="bg-accent-copper text-neutral-white px-4 py-2 rounded-lg hover:bg-accent-copper-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                     >
                       {isUploading ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-neutral-white" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
@@ -371,7 +371,7 @@ const CapturaAbonoModal = ({ show, onClose, clienteId, prestamoId, modalTitle })
                 <button
                   onClick={handleClose}
                   disabled={isUploading || loading}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-accent-steel text-neutral-white px-4 py-2 rounded-lg hover:bg-accent-steel-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cerrar
                 </button>

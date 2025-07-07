@@ -70,13 +70,12 @@ const CapturaModal = ({
       toast.error(error.message || 'Error al rechazar el pago');
     }
   };
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-60">
-      <div className="bg-white rounded-xl w-full max-w-4xl mx-4 p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+return (
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-neutral-dark bg-opacity-60">
+      <div className="bg-neutral-softWhite rounded-xl w-full max-w-4xl mx-4 p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+          className="absolute top-4 right-4 text-accent-steel hover:text-accent-steel-600"
           title="Cerrar"
           aria-label="Cerrar modal"
         >
@@ -84,25 +83,25 @@ const CapturaModal = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <h3 className="text-xl font-bold mb-4 text-blue-600">{modalTitle}</h3>
+        <h3 className="text-xl font-bold mb-4 text-neutral-dark">{modalTitle}</h3>
         {modalError ? (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800 font-medium">{modalError}</p>
+          <div className="p-4 bg-primary-100 border border-primary-soft rounded-lg">
+            <p className="text-primary-800 font-medium">{modalError}</p>
           </div>
         ) : (
           <div className="space-y-4">
             {modalContent.capturaUrl ? (
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Captura de Pago</h4>
+                <h4 className="text-sm font-medium text-neutral-dark mb-2">Captura de Pago</h4>
                 <img
                   src={modalContent.capturaUrl}
                   alt="Captura de Pago"
-                  className="w-full max-h-[70vh] object-contain rounded-lg border border-gray-200 shadow-sm"
+                  className="w-full max-h-[70vh] object-contain rounded-lg border border-neutral-gray shadow-sm"
                 />
               </div>
             ) : (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-yellow-800 font-medium">No hay captura de pago disponible.</p>
+              <div className="p-4 bg-accent-mint-100 border border-accent-mint rounded-lg">
+                <p className="text-accent-copper-800 font-medium">No hay captura de pago disponible.</p>
               </div>
             )}
           </div>
@@ -110,7 +109,7 @@ const CapturaModal = ({
         {selectedCuota && selectedCuota.estado === 'prepagado' && !modalError && (
           <div className="mt-4">
             <div className="mb-4">
-              <label htmlFor="motivo" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="motivo" className="block text-sm font-medium text-neutral-dark mb-1">
                 Motivo de Rechazo
               </label>
               <select
@@ -118,7 +117,7 @@ const CapturaModal = ({
                 value={motivo}
                 onChange={(e) => setMotivo(e.target.value)}
                 disabled={useCustomMotivo}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2 border border-neutral-gray rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
               >
                 {genericMotivos.map((m) => (
                   <option key={m} value={m}>{m}</option>
@@ -131,22 +130,22 @@ const CapturaModal = ({
                 id="customMotivo"
                 checked={useCustomMotivo}
                 onChange={(e) => setUseCustomMotivo(e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-primary focus:ring-primary border-neutral-gray rounded"
               />
-              <label htmlFor="customMotivo" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="customMotivo" className="ml-2 text-sm text-neutral-dark">
                 Especificar motivo personalizado
               </label>
             </div>
             {useCustomMotivo && (
               <div className="mb-4">
-                <label htmlFor="customMotivoText" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="customMotivoText" className="block text-sm font-medium text-neutral-dark mb-1">
                   Motivo Personalizado
                 </label>
                 <textarea
                   id="customMotivoText"
                   value={customMotivo}
                   onChange={(e) => setCustomMotivo(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-neutral-gray rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                   rows="4"
                   placeholder="Escriba el motivo del rechazo..."
                 />
@@ -155,14 +154,14 @@ const CapturaModal = ({
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleConfirmarPagoPrepagado}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm"
+                className="bg-accent-copper hover:bg-accent-copper-600 text-neutral-white font-bold py-2 px-4 rounded-lg shadow-sm"
                 aria-label="Confirmar pago prepagado"
               >
                 Confirmar Pago
               </button>
               <button
                 onClick={handleRechazar}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm"
+                className="bg-primary hover:bg-primary-600 text-neutral-white font-bold py-2 px-4 rounded-lg shadow-sm"
                 aria-label="Rechazar pago prepagado"
               >
                 Rechazar Pago
