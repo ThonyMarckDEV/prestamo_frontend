@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import FormClientes from '../../../components/ui/Asesor/ClientesComponents/FormClientes';
-import ClientesCard from '../../../components/ui/Asesor/ClientesComponents/ClientesCard';
+import FormClientes from '../../../components/ui/Admin/ClientesComponents/FormClientes';
+import ClientesCard from '../../../components/ui/Admin/ClientesComponents/ClientesCard';
 import { fetchWithAuth } from '../../../js/authToken';
 import API_BASE_URL from '../../../js/urlHelper';
-import SkeletonClienteCard from '../../../components/ui/Asesor/ClientesComponents/LoadingSkeletons/SkeletonLoadingClienteCard';
+import SkeletonClienteCard from '../../../components/ui/Admin/ClientesComponents/LoadingSkeletons/SkeletonLoadingClienteCard';
 
 const ClientesUI = () => {
   const [clientes, setClientes] = useState([]);
@@ -31,11 +31,11 @@ const ClientesUI = () => {
     try {
       setLoading(true);
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/clientes/getclients`);
-      
+
       if (!response.ok) {
         throw new Error('Error al cargar clientes');
       }
-      
+
       const data = await response.json();
       console.log('Clientes fetched:', data.clientes); // Debug log
       setClientes(data.clientes);
@@ -50,32 +50,32 @@ const ClientesUI = () => {
 
   const filterClientes = () => {
     let result = [...clientes];
-  
+
     if (statusFilter !== 'all') {
       result = result.filter(cliente => cliente.estado === parseInt(statusFilter));
-    }    
-  
+    }
+
     if (avalFilter !== 'all') {
       const filterAval = avalFilter === 'true';
       result = result.filter(cliente => cliente.datos?.aval === filterAval);
     }
-  
+
     if (searchTerm) {
       const termWords = searchTerm.toLowerCase().split(/\s+/);
-  
+
       result = result.filter(cliente => {
         const nombre = cliente.datos?.nombre?.toLowerCase() || '';
         const apellido = cliente.datos?.apellido?.toLowerCase() || '';
         const dni = cliente.datos?.dni?.toLowerCase() || '';
-  
+
         const fullText = `${nombre} ${apellido}`.toLowerCase();
-  
+
         return termWords.every(word =>
           fullText.includes(word) || dni.includes(word)
         );
       });
     }
-  
+
     setFilteredClientes(result);
     setCurrentPage(1);
   };
@@ -89,36 +89,36 @@ const ClientesUI = () => {
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
       pageNumbers.push(1);
-      
+
       let startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
       let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 3);
-      
+
       if (endPage === totalPages - 1) {
         startPage = Math.max(2, endPage - (maxVisiblePages - 3));
       }
-      
+
       if (startPage > 2) {
         pageNumbers.push('...');
       }
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
       }
-      
+
       if (endPage < totalPages - 1) {
         pageNumbers.push('...');
       }
-      
+
       pageNumbers.push(totalPages);
     }
-    
+
     return pageNumbers;
   };
 
@@ -133,7 +133,7 @@ const ClientesUI = () => {
   const handleClientUpdated = (updatedClientResponse) => {
     const updatedClient = updatedClientResponse.cliente; // Extract cliente from response
     console.log('Client updated:', updatedClient); // Debug log
-    setClientes(clientes.map(cliente => 
+    setClientes(clientes.map(cliente =>
       cliente.idUsuario === updatedClient.idUsuario ? updatedClient : cliente
     ));
     resetForm();
@@ -141,7 +141,7 @@ const ClientesUI = () => {
   };
 
   const handleStatusChange = (clientId, newStatus) => {
-    setClientes(clientes.map(cliente => 
+    setClientes(clientes.map(cliente =>
       cliente.idUsuario === clientId ? { ...cliente, estado: newStatus } : cliente
     ));
   };
@@ -183,12 +183,11 @@ const ClientesUI = () => {
         <div className="p-4 sm:p-4">
           <div className="mb-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <h1 className="text-xl font-bold text-red-800">REGISTRO DE CLIENTES</h1>
+              <h1 className="text-xl font-bold text-primary-600">REGISTRO DE CLIENTES</h1>
               <button
                 onClick={toggleForm}
-                className={`${
-                  isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700'
-                } text-white font-bold py-2 px-4 rounded flex items-center w-full sm:w-auto justify-center`}
+                className={`${isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-accent-yellow-400 hover:bg-accent-yellow-600'
+                  } text-white font-bold py-2 px-4 rounded flex items-center w-full sm:w-auto justify-center`}
               >
                 {isEditing ? (
                   'CANCELAR EDICIÓN'
@@ -202,7 +201,7 @@ const ClientesUI = () => {
                 ) : (
                   <>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                     AGREGAR NUEVO CLIENTE
                   </>
@@ -210,12 +209,12 @@ const ClientesUI = () => {
               </button>
             </div>
           </div>
-          
+
           {showForm && (
-            <div className="mb-4 bg-white rounded-lg shadow-lg border-t-4 border-red-600">
-              <div className="bg-gradient-to-r from-red-600 to-yellow-500 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
+            <div className="mb-4 bg-white rounded-lg shadow-lg border-t-4 border-primary-600">
+              <div className="bg-gradient-to-r from-primary to-primary-800 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
                 <h2 className="text-lg font-bold">{isEditing ? 'EDITAR CLIENTE' : 'AGREGAR NUEVO CLIENTE'}</h2>
-                <button 
+                <button
                   onClick={resetForm}
                   className="text-white hover:text-gray-200"
                 >
@@ -225,8 +224,8 @@ const ClientesUI = () => {
                 </button>
               </div>
               <div className="p-4">
-                <FormClientes 
-                  onClientAdded={handleClientAdded} 
+                <FormClientes
+                  onClientAdded={handleClientAdded}
                   onClientUpdated={handleClientUpdated} // Fixed prop typo
                   initialData={editingClient}
                   isEditing={isEditing}
@@ -235,7 +234,7 @@ const ClientesUI = () => {
               </div>
             </div>
           )}
-          
+
           {/* Search and Filter Section */}
           <div className="mb-4 bg-white p-4 rounded-lg shadow-md">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -254,13 +253,13 @@ const ClientesUI = () => {
                     type="text"
                     id="search"
                     placeholder="BUSCAR POR NOMBRES, APELLIDOS O DNI..."
-                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
-              
+
               {/* Status Filter */}
               <div>
                 <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
@@ -268,7 +267,7 @@ const ClientesUI = () => {
                 </label>
                 <select
                   id="status"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -284,7 +283,7 @@ const ClientesUI = () => {
                 </label>
                 <select
                   id="aval"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={avalFilter}
                   onChange={(e) => setAvalFilter(e.target.value)}
                 >
@@ -307,13 +306,13 @@ const ClientesUI = () => {
               </div>
             </div>
           </div>
-          
+
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
             </div>
           )}
-          
+
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {Array(6).fill().map((_, index) => (
@@ -323,7 +322,7 @@ const ClientesUI = () => {
           ) : (
             <>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                <h2 className="text-lg font-semibold text-red-800 mb-1 sm:mb-0">LISTADO DE CLIENTES</h2>
+                <h2 className="text-lg font-semibold text-primary-600 mb-1 sm:mb-0">LISTADO DE CLIENTES</h2>
                 <div className="text-sm text-gray-600">
                   {filteredClientes.length > 0 ? (
                     `MOSTRANDO ${indexOfFirstCliente + 1} - ${Math.min(indexOfLastCliente, filteredClientes.length)} de ${filteredClientes.length}`
@@ -332,7 +331,7 @@ const ClientesUI = () => {
                   )}
                 </div>
               </div>
-              
+
               {filteredClientes.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {currentClientes.map(cliente => (
@@ -347,17 +346,17 @@ const ClientesUI = () => {
               ) : (
                 <div className="bg-white rounded-lg shadow-md p-4 text-center">
                   <p className="text-gray-600">
-                    {clientes.length === 0 
-                      ? "NO HAY CLIENTES REGISTRADOS" 
+                    {clientes.length === 0
+                      ? "NO HAY CLIENTES REGISTRADOS"
                       : "NO SE ENCONTRARON CLIENTES QUE COINCIDAN CON LOS CRITERIOS DE BÚSQUEDA"}
                   </p>
                 </div>
               )}
-              
+
               {totalPages > 1 && (
                 <div className="flex justify-center mt-4 mb-6">
                   <nav className="flex items-center space-x-1" aria-label="Pagination">
-                    <button 
+                    <button
                       onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
                       disabled={currentPage === 1}
                       className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -367,7 +366,7 @@ const ClientesUI = () => {
                         <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </button>
-                    
+
                     {getPageNumbers().map((pageNumber, index) => (
                       pageNumber === '...' ? (
                         <span key={`ellipsis-${index}`} className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
@@ -377,19 +376,18 @@ const ClientesUI = () => {
                         <button
                           key={`page-${pageNumber}`}
                           onClick={() => typeof pageNumber === 'number' && paginate(pageNumber)}
-                          className={`relative inline-flex items-center px-3 py-2 border text-sm font-medium ${
-                            currentPage === pageNumber
+                          className={`relative inline-flex items-center px-3 py-2 border text-sm font-medium ${currentPage === pageNumber
                               ? 'z-10 bg-red-600 border-red-600 text-white'
                               : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                          }`}
+                            }`}
                           aria-current={currentPage === pageNumber ? 'page' : undefined}
                         >
                           {pageNumber}
                         </button>
                       )
                     ))}
-                    
-                    <button 
+
+                    <button
                       onClick={() => paginate(currentPage < totalPages ? currentPage + 1 : totalPages)}
                       disabled={currentPage === totalPages}
                       className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"

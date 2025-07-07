@@ -68,7 +68,7 @@ export default function Principal() {
       {/* Hamburger menu button - position fixed to stay on top */}
       <button
         onClick={toggleSidebar}
-        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-red-600 text-white md:hidden"
+        className="fixed z-20 top-4 left-4 p-2 rounded-md bg-primary-600 text-white md:hidden"
       >
         {sidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </button>
@@ -85,7 +85,7 @@ export default function Principal() {
       <div
         ref={sidebarRef}
         className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 w-64 bg-red-600 text-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
+          } md:translate-x-0 w-64 bg-primary text-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
         onMouseLeave={() => {
           if (!isMobile.current && isHovering) {
             setSidebarOpen(false);
@@ -106,7 +106,7 @@ export default function Principal() {
           {/* Botón de cerrar solo para móviles */}
           <button
             onClick={toggleSidebar}
-            className="absolute top-2 right-2 text-red-600 md:hidden"
+            className="absolute top-2 right-2 text-primary-600 md:hidden"
             aria-label="Cerrar menú"
           >
             <FaTimes size={24} />
@@ -138,10 +138,10 @@ export default function Principal() {
         </nav>
 
         {/* Logout button en la parte inferior */}
-        <div className="p-4 border-t border-red-700">
+        <div className="p-4 border-t border-primary-600">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded w-full"
+            className="flex items-center gap-2 bg-primary-light hover:bg-primary-dark text-white px-4 py-2 rounded w-full"
           >
             <FaSignOutAlt /> CERRAR SESIÓN
           </button>
@@ -171,7 +171,7 @@ export default function Principal() {
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded bg-primary-light text-white hover:bg-primary-dark"
               >
                 SÍ
               </button>
