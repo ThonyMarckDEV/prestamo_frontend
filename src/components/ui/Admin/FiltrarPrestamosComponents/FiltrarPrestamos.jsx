@@ -422,7 +422,7 @@ const FiltrarPrestamos = () => {
         </div>
       )}
 
-      <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-red-600">
+      <div className="mb-8 bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
@@ -440,7 +440,7 @@ const FiltrarPrestamos = () => {
               setClientSearch('');
               setFilterClientsWithLoans(false);
             }}
-            className="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+            className="h-5 w-5 text-primary-600 focus:ring-primary-600 border-gray-300 rounded"
           />
           <label htmlFor="groupSearch" className="ml-2 text-sm font-medium text-gray-700">
             BUSCAR POR GRUPO
@@ -464,7 +464,7 @@ const FiltrarPrestamos = () => {
                   setClientPage(1);
                   setFilterClientsWithLoans(false);
                 }}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
               >
                 <option value="">SELECCIONE GRUPO</option>
                 {groups.map(group => (
@@ -490,7 +490,7 @@ const FiltrarPrestamos = () => {
                   setLoanPage(1);
                 }}
                 placeholder="INGRESE DNI, ID, NOMBRE O APELLIDO"
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
               />
             </div>
           )}
@@ -501,7 +501,7 @@ const FiltrarPrestamos = () => {
             <select
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             >
               <option value="">TODOS</option>
               <option value="pendiente">PENDIENTE</option>
@@ -528,7 +528,7 @@ const FiltrarPrestamos = () => {
                 setFilterClientsWithLoans(false);
               }}
               disabled={loadingAdvisors}
-              className={`w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition ${
+              className={`w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition ${
                 loadingAdvisors ? 'bg-gray-100 cursor-not-allowed' : ''
               }`}
             >
@@ -551,14 +551,14 @@ const FiltrarPrestamos = () => {
             <button
               onClick={handleFilter}
               disabled={(!selectedLoan || loading)}
-              className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
+              className="w-full md:w-auto bg-primary hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
             >
               {loading ? 'Filtrando...' : 'Filtrar'}
             </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="w-full md:w-auto bg-white border border-red-600 text-red-600 hover:bg-red-50 font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
+              className="w-full md:w-auto bg-white border border-primary-600 text-primary-600 hover:bg-primary-100 font-semibold py-3 px-6 rounded-lg transition transform hover:scale-105"
             >
               LIMPIAR FILTROS
             </button>
@@ -580,7 +580,7 @@ const FiltrarPrestamos = () => {
                 setClientPage(1);
               }}
               placeholder="Buscar cliente en esta página..."
-              className="w-full sm:w-1/2 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+              className="w-full sm:w-1/2 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             />
           </div>
           {paginatedClients.length > 0 ? (
@@ -645,7 +645,7 @@ const FiltrarPrestamos = () => {
             <button
               onClick={handleGenerateLoansPDF}
               disabled={!selectedClient}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="bg-primary-light hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               Reporte Préstamos
             </button>
@@ -687,7 +687,7 @@ const FiltrarPrestamos = () => {
                     e.stopPropagation();
                     handleViewAbono(loan.idPrestamo, selectedClient);
                   }}
-                  className="mt-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg transition transform hover:scale-105"
+                  className="mt-2 bg-primary-light hover:bg-primary-dark text-white font-semibold py-1 px-3 rounded-lg transition transform hover:scale-105"
                   aria-label="Ver captura de abono"
                 >
                   Ver Abono
@@ -732,7 +732,7 @@ const FiltrarPrestamos = () => {
       )}
 
       {cuotas.length > 0 && (
-        <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-yellow-500">
+        <div className="bg-white shadow-lg rounded-xl p-6 border-t-4 border-primary-600">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900">
               CUOTAS
@@ -741,7 +741,7 @@ const FiltrarPrestamos = () => {
               <button
                 onClick={handleGenerateInstallmentsPDF}
                 disabled={!selectedLoan}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="bg-primary-light hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg transition transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Reporte Cuotas
               </button>
@@ -804,7 +804,7 @@ const FiltrarPrestamos = () => {
                       {cuota.estado === 'pagado' && (
                         <button
                           onClick={() => handleViewComprobante(cuota.idCuota)}
-                          className="bg-red-600 hover:bg-red-700 text-white font-semibold p-2 rounded-lg transition transform hover:scale-105"
+                          className="bg-primary-light hover:bg-primary-dark text-white font-semibold p-2 rounded-lg transition transform hover:scale-105"
                           aria-label="Ver comprobante de pago"
                         >
                           <svg
