@@ -85,7 +85,7 @@ export default function Principal() {
         ref={sidebarRef}
         className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 w-64 bg-red-600 text-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
+        } md:translate-x-0 w-64 bg-primary text-white flex flex-col fixed h-full z-20 transition-transform duration-300 ease-in-out`}
         onMouseLeave={() => {
           if (!isMobile.current && isHovering) {
             setSidebarOpen(false);
@@ -124,10 +124,10 @@ export default function Principal() {
         </nav>
 
         {/* Logout button en la parte inferior */}
-        <div className="p-4 border-t border-red-700">
+        <div className="p-4 border-t border-primary-dark">
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded w-full"
+            className="flex items-center gap-2 bg-primary-light hover:bg-primary-dark text-neutral-white px-4 py-2 rounded w-full"
           >
             <FaSignOutAlt /> CERRAR SESIÓN
           </button>
