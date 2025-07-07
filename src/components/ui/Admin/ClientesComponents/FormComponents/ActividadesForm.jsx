@@ -224,8 +224,8 @@ const ActividadesForm = ({ actividades = {}, errors = {}, onChange, isEditing = 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-8 bg-red-600 mr-3 rounded" />
-        <h3 className="text-lg font-medium text-red-700">ACTIVIDADES DEL CLIENTE</h3>
+        <div className="w-2 h-8 bg-primary mr-3 rounded" />
+        <h3 className="text-lg font-medium text-primary-600">ACTIVIDADES DEL CLIENTE</h3>
       </div>
 
       <p className="mb-4 text-sm font-bold text-gray-700">

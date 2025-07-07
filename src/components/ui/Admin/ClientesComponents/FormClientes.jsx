@@ -357,7 +357,7 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
           <button
             type="button"
             onClick={onCancel}
-            className="mr-4 bg-neutral-gray hover:bg-accent-steel-DEFAULT text-primary-800 font-bold py-2 px-6 rounded"
+            className="mr-4 bg-neutral-gray hover:bg-slate-500 text-primary-800 font-bold py-2 px-6 rounded"
           >
             CANCELAR
           </button>
@@ -365,7 +365,7 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
         <button
           type="submit"
           disabled={isLoading}
-          className="text-neutral-white bg-accent-copper-DEFAULT hover:bg-accent-copper-600 focus:ring-4 focus:ring-accent-yellow-100 font-bold rounded-lg text-sm px-6 py-2.5 focus:outline-none disabled:opacity-50"
+          className="text-neutral-white bg-accent-yellow-400 hover:bg-accent-yellow-600 focus:ring-4 focus:ring-accent-yellow-100 font-bold rounded-lg text-sm px-6 py-2.5 focus:outline-none disabled:opacity-50"
         >
           {isLoading
             ? isEditing

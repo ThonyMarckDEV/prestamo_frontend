@@ -183,10 +183,10 @@ const ClientesUI = () => {
         <div className="p-4 sm:p-4">
           <div className="mb-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <h1 className="text-xl font-bold text-red-800">REGISTRO DE CLIENTES</h1>
+              <h1 className="text-xl font-bold text-primary-600">REGISTRO DE CLIENTES</h1>
               <button
                 onClick={toggleForm}
-                className={`${isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700'
+                className={`${isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-accent-yellow-400 hover:bg-accent-yellow-600'
                   } text-white font-bold py-2 px-4 rounded flex items-center w-full sm:w-auto justify-center`}
               >
                 {isEditing ? (
@@ -211,8 +211,8 @@ const ClientesUI = () => {
           </div>
 
           {showForm && (
-            <div className="mb-4 bg-white rounded-lg shadow-lg border-t-4 border-red-600">
-              <div className="bg-gradient-to-r from-red-600 to-yellow-500 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
+            <div className="mb-4 bg-white rounded-lg shadow-lg border-t-4 border-primary-600">
+              <div className="bg-gradient-to-r from-primary to-primary-800 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
                 <h2 className="text-lg font-bold">{isEditing ? 'EDITAR CLIENTE' : 'AGREGAR NUEVO CLIENTE'}</h2>
                 <button
                   onClick={resetForm}
@@ -253,7 +253,7 @@ const ClientesUI = () => {
                     type="text"
                     id="search"
                     placeholder="BUSCAR POR NOMBRES, APELLIDOS O DNI..."
-                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -267,7 +267,7 @@ const ClientesUI = () => {
                 </label>
                 <select
                   id="status"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -283,7 +283,7 @@ const ClientesUI = () => {
                 </label>
                 <select
                   id="aval"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={avalFilter}
                   onChange={(e) => setAvalFilter(e.target.value)}
                 >
@@ -322,7 +322,7 @@ const ClientesUI = () => {
           ) : (
             <>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                <h2 className="text-lg font-semibold text-red-800 mb-1 sm:mb-0">LISTADO DE CLIENTES</h2>
+                <h2 className="text-lg font-semibold text-primary-600 mb-1 sm:mb-0">LISTADO DE CLIENTES</h2>
                 <div className="text-sm text-gray-600">
                   {filteredClientes.length > 0 ? (
                     `MOSTRANDO ${indexOfFirstCliente + 1} - ${Math.min(indexOfLastCliente, filteredClientes.length)} de ${filteredClientes.length}`

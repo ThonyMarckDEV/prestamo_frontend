@@ -44,7 +44,7 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
 
   const inputClass = (field) =>
     `shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-      errors[`direccionCorrespondencia.${field}`] ? 'border-red-500' : 'border-yellow-300'
+      errors[`direccionCorrespondencia.${field}`] ? 'border-red-500' : 'border-primary-600'
     }`;
 
   const handleDepartamentoChange = (e) => {
@@ -65,8 +65,8 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-8 bg-red-600 mr-3 rounded" />
-        <h3 className="text-lg console.log('peruData en DireccionCorrespondencia:', peruData);font-medium text-red-700">DIRECCIÓN DE CORRESPONDENCIA/NEGOCIO</h3>
+        <div className="w-2 h-8 bg-primary mr-3 rounded" />
+        <h3 className="text-lg font-medium text-primary-600">DIRECCIÓN DE CORRESPONDENCIA/NEGOCIO</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {fields.map(({ key, label, type, placeholder, autoComplete, maxLength }) => (

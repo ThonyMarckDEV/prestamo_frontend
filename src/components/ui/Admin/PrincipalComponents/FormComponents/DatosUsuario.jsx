@@ -24,7 +24,7 @@ const fields = [
 const DatosUsuario = ({ datos, errors, onChange }) => {
   const inputClass = (fieldKey) =>
     `shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-      errors[`datos.${fieldKey}`] ? 'border-red-500' : 'border-yellow-300'
+      errors[`datos.${fieldKey}`] ? 'border-red-500' : 'border-primary-600'
     }`;
 
   // Solo mayúsculas para campos de texto excepto DNI, RUC, fecha
@@ -41,8 +41,8 @@ const DatosUsuario = ({ datos, errors, onChange }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-8 bg-red-600 mr-3 rounded" />
-        <h3 className="text-lg font-medium text-red-700">DATOS PERSONALES</h3>
+        <div className="w-2 h-8 bg-primary mr-3 rounded" />
+        <h3 className="text-lg font-medium text-primary-600">DATOS PERSONALES</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {fields.map(({ key, label, type, options, placeholder, autoComplete, inputMode, maxLength }) => (

@@ -41,7 +41,7 @@ const DireccionFiscal = ({ direccion, peruData, errors, onChange }) => {
 
   const inputClass = (field) =>
     `shadow appearance-none border rounded w-full py-3 px-4 text-primary-800 leading-tight focus:outline-none focus:shadow-outline ${
-      errors[`direccionFiscal.${field}`] ? 'border-accent-copper-600' : 'border-accent-yellow-300'
+      errors[`direccionFiscal.${field}`] ? 'border-accent-copper-600' : 'border-primary-600'
     }`;
 
   const handleDepartamentoChange = (e) => {
@@ -62,8 +62,8 @@ const DireccionFiscal = ({ direccion, peruData, errors, onChange }) => {
   return (
     <div className="bg-neutral-white shadow-md rounded-lg p-6">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-8 bg-accent-copper-600 mr-3 rounded" />
-        <h3 className="text-lg font-medium text-accent-copper-800">DIRECCIÓN FISCAL (DNI)</h3>
+        <div className="w-2 h-8 bg-primary mr-3 rounded" />
+        <h3 className="text-lg font-medium text-primary-600">DIRECCIÓN FISCAL (DNI)</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {fields.map(({ key, label, type, placeholder, autoComplete, maxLength }) => (

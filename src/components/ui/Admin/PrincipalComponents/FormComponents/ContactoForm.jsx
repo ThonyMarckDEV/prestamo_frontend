@@ -1,7 +1,7 @@
 const ContactoForm = ({ contacto, errors, onChange }) => {
   const inputClass = (field) =>
     `shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-      errors[`contactos.0.${field}`] ? 'border-red-500' : 'border-yellow-300'
+      errors[`contactos.0.${field}`] ? 'border-red-500' : 'border-primary-600'
     }`;
 
   const handleTelChange = (e) => {
@@ -12,8 +12,8 @@ const ContactoForm = ({ contacto, errors, onChange }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <div className="flex items-center mb-4">
-        <div className="w-2 h-8 bg-red-600 mr-3 rounded" />
-        <h3 className="text-lg font-medium text-red-700">DATOS DE CONTACTO</h3>
+        <div className="w-2 h-8 bg-primary mr-3 rounded" />
+        <h3 className="text-lg font-medium text-primary-600">DATOS DE CONTACTO</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Teléfono principal */}
