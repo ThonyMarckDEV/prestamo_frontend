@@ -128,7 +128,7 @@ const ClienteAvales = () => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-red-600 mb-2">ASIGNACIÓN DE AVALES A CLIENTES</h1>
+        <h1 className="text-2xl font-bold text-primary-600 mb-2">ASIGNACIÓN DE AVALES A CLIENTES</h1>
         <p className="text-gray-600">SELECCIONE UN CLIENTE Y UN AVAL PARA REALIZAR LA ASIGNACIÓN. UN CLIENTE PUEDE TENER UN AVAL Y UN AVAL HASTA 2 CLIENTES ASIGNADOS</p>
       </div>
 
