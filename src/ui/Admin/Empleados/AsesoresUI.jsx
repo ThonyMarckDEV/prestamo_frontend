@@ -172,7 +172,7 @@ const AsesoresUI = () => {
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold text-red-800">GESTIÓN DE EMPLEADOS</h1>
+            <h1 className="text-xl font-bold text-primary-600">GESTIÓN DE EMPLEADOS</h1>
             <button
               onClick={toggleForm}
               className={`${
@@ -301,7 +301,7 @@ const AsesoresUI = () => {
           {/* Results count display */}
           {!loading && (
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-              <h2 className="text-lg font-semibold text-red-800 mb-1 sm:mb-0">LISTADO DE EMPLEADOS</h2>
+              <h2 className="text-lg font-semibold text-primary-600 mb-1 sm:mb-0">LISTADO DE EMPLEADOS</h2>
               <div className="text-sm text-gray-600">
                 {filteredAsesores.length > 0 ? (
                   `MOSTRANDO ${indexOfFirstAsesor + 1} - ${Math.min(indexOfLastAsesor, filteredAsesores.length)} DE ${filteredAsesores.length}`
