@@ -4,82 +4,85 @@ export function isValidEmail(email) {
 
 // Transforma datos iniciales
 export function transformInitialData(data) {
-    console.log('Datos iniciales recibidos:', data); // Depuración
+  console.log('Datos iniciales recibidos:', data);
 
-    const datos = data.datos || {};
-    const direcciones = datos.direcciones || [];
-    const contactos = datos.contactos || [];
-    const cuentasBancarias = datos.cuentas_bancarias || [];
-    const actividadesEconomicas = datos.actividades_economicas || [];
+  const datos = data.datos || {};
+  const direcciones = datos.direcciones || [];
+  const contactos = datos.contactos || [];
+  const cuentasBancarias = datos.cuentas_bancarias || [];
+  const actividadesEconomicas = datos.actividades_economicas || [];
 
-    console.log('actividadesEconomicas iniciales:', actividadesEconomicas); // Depuración
+  console.log('actividadesEconomicas iniciales:', actividadesEconomicas);
 
-    const direccionFiscal = direcciones.find((dir) => dir.tipo === 'FISCAL') || {};
-    const direccionCorrespondencia = direcciones.find((dir) => dir.tipo === 'CORRESPONDENCIA') || {};
-    const contactoPrincipal = contactos.find((cont) => cont.tipo === 'PRINCIPAL') || {};
-    const cuentaPrincipal = cuentasBancarias[0] || {};
+  const direccionFiscal = direcciones.find((dir) => dir.tipo === 'FISCAL') || {};
+  const direccionCorrespondencia = direcciones.find((dir) => dir.tipo === 'CORRESPONDENCIA') || {};
+  const contactoPrincipal = contactos.find((cont) => cont.tipo === 'PRINCIPAL') || {};
+  const cuentaPrincipal = cuentasBancarias[0] || {};
 
-    const actividadNoSensible = actividadesEconomicas.find((act) => act.idNoSensible && act.no_sensible) || null;
-    const actividadCIIU = actividadesEconomicas.find((act) => act.idCiiu && act.ciiu) || null;
+  const actividadNoSensible = actividadesEconomicas.find((act) => act.idNoSensible && act.no_sensible) || null;
+  const actividadCIIU = actividadesEconomicas.find((act) => act.idCiiu && act.ciiu) || null;
 
-    const transformedData = {
-        idUsuario: data.idUsuario,
-        datos: {
-            nombre: datos.nombre || '',
-            apellidoPaterno: datos.apellidoPaterno || '',
-            apellidoMaterno: datos.apellidoMaterno || '',
-            apellidoConyuge: datos.apellidoConyuge || '',
-            estadoCivil: datos.estadoCivil || '',
-            dni: datos.dni || '',
-            fechaCaducidadDni: datos.fechaCaducidadDni || '',
-            ruc: datos.ruc || '',
-        },
-        direcciones: [
-            {
-                tipo: 'FISCAL',
-                tipoVia: direccionFiscal.tipoVia || '',
-                nombreVia: direccionFiscal.nombreVia || '',
-                numeroMz: direccionFiscal.numeroMz || '',
-                urbanizacion: direccionFiscal.urbanizacion || '',
-                departamento: direccionFiscal.departamento || '',
-                provincia: direccionFiscal.provincia || '',
-                distrito: direccionFiscal.distrito || '',
-            },
-            {
-                tipo: 'CORRESPONDENCIA',
-                tipoVia: direccionCorrespondencia.tipoVia || '',
-                nombreVia: direccionCorrespondencia.nombreVia || '',
-                numeroMz: direccionCorrespondencia.numeroMz || '',
-                urbanizacion: direccionCorrespondencia.urbanizacion || '',
-                departamento: direccionCorrespondencia.departamento || '',
-                provincia: direccionCorrespondencia.provincia || '',
-                distrito: direccionCorrespondencia.distrito || '',
-            },
-        ],
-        contactos: [
-            {
-                tipo: 'PRINCIPAL',
-                telefono: contactoPrincipal.telefono || '',
-                email: contactoPrincipal.email || '',
-            },
-        ],
-        cuentasBancarias: [
-            {
-                numeroCuenta: cuentaPrincipal.numeroCuenta || '',
-                cci: cuentaPrincipal.cci || '',
-                entidadFinanciera: cuentaPrincipal.entidadFinanciera || '',
-            },
-        ],
-        actividadesEconomicas: {
-            noSensibles: actividadNoSensible ? actividadNoSensible.no_sensible : null,
-            ciiu: actividadCIIU ? actividadCIIU.ciiu : null,
-        },
-        expuesta: datos.expuesta === true || datos.expuesta === 1 ? 1 : 0,
-        aval: datos.aval === true || datos.aval === 1 ? 1 : 0,
-    };
+  // Normalizar claves para que coincidan con peruData
+  const normalizeKey = (key) => (key ? key.replace(/ /g, '_').toUpperCase() : '');
 
-    console.log('Datos transformados:', transformedData); // Depuración
-    return transformedData;
+  const transformedData = {
+    idUsuario: data.idUsuario,
+    datos: {
+      nombre: datos.nombre || '',
+      apellidoPaterno: datos.apellidoPaterno || '',
+      apellidoMaterno: datos.apellidoMaterno || '',
+      apellidoConyuge: datos.apellidoConyuge || '',
+      estadoCivil: datos.estadoCivil || '',
+      dni: datos.dni || '',
+      fechaCaducidadDni: datos.fechaCaducidadDni || '',
+      ruc: datos.ruc || '',
+    },
+    direcciones: [
+      {
+        tipo: 'FISCAL',
+        tipoVia: direccionFiscal.tipoVia || '',
+        nombreVia: direccionFiscal.nombreVia || '',
+        numeroMz: direccionFiscal.numeroMz || '',
+        urbanizacion: direccionFiscal.urbanizacion || '',
+        departamento: normalizeKey(direccionFiscal.departamento),
+        provincia: normalizeKey(direccionFiscal.provincia),
+        distrito: direccionFiscal.distrito || '',
+      },
+      {
+        tipo: 'CORRESPONDENCIA',
+        tipoVia: direccionCorrespondencia.tipoVia || '',
+        nombreVia: direccionCorrespondencia.nombreVia || '',
+        numeroMz: direccionCorrespondencia.numeroMz || '',
+        urbanizacion: direccionCorrespondencia.urbanizacion || '',
+        departamento: normalizeKey(direccionCorrespondencia.departamento),
+        provincia: normalizeKey(direccionCorrespondencia.provincia),
+        distrito: direccionCorrespondencia.distrito || '',
+      },
+    ],
+    contactos: [
+      {
+        tipo: 'PRINCIPAL',
+        telefono: contactoPrincipal.telefono || '',
+        email: contactoPrincipal.email || '',
+      },
+    ],
+    cuentasBancarias: [
+      {
+        numeroCuenta: cuentaPrincipal.numeroCuenta || '',
+        cci: cuentaPrincipal.cci || '',
+        entidadFinanciera: cuentaPrincipal.entidadFinanciera || '',
+      },
+    ],
+    actividadesEconomicas: {
+      noSensibles: actividadNoSensible ? actividadNoSensible.no_sensible : null,
+      ciiu: actividadCIIU ? actividadCIIU.ciiu : null,
+    },
+    expuesta: datos.expuesta === true || datos.expuesta === 1 ? 1 : 0,
+    aval: datos.aval === true || datos.aval === 1 ? 1 : 0,
+  };
+
+  console.log('Datos transformados:', transformedData);
+  return transformedData;
 }
 
 // Valida los campos del formulario

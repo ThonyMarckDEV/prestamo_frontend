@@ -12,7 +12,7 @@ import RadioOptionGroup from './FormComponents/RadioOptionGroup';
 import FormSection from './FormComponents/FormSection';
 import peruData from '../../../../utilities/PeruData';
 import { transformInitialData, validateFields, flattenErrors } from '../../../../utilities/ValidacionesCliente';
-
+console.log('peruData importado en FormClientes:', peruData);
 const initialState = {
   datos: {
     nombre: '',
@@ -291,16 +291,19 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
     [formData.actividadesEconomicas]
   );
 
-  return (
-    <form onSubmit={handleSubmit} className="text-gray-800 w-full" aria-busy={isLoading}>
+  console.log('peruData antes de pasar a DireccionCorrespondencia:', peruData);
+
+ return (
+    <form onSubmit={handleSubmit} className="text-primary-800 w-full" aria-busy={isLoading}>
       {errors.general && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+        <div className="bg-accent-yellow-50 border border-accent-yellow-200 text-accent-copper-600 px-4 py-3 rounded mb-4" role="alert">
           {errors.general}
         </div>
       )}
 
       <fieldset disabled={isLoading} className="space-y-6">
         <DatosUsuario datos={formData.datos} errors={errors} onChange={handleChange} />
+  
         <DireccionFiscal
           direccion={formData.direcciones.find((d) => d.tipo === 'FISCAL')}
           peruData={peruData}
@@ -354,7 +357,7 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
           <button
             type="button"
             onClick={onCancel}
-            className="mr-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded"
+            className="mr-4 bg-neutral-gray hover:bg-accent-steel-DEFAULT text-primary-800 font-bold py-2 px-6 rounded"
           >
             CANCELAR
           </button>
@@ -362,7 +365,7 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
         <button
           type="submit"
           disabled={isLoading}
-          className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-bold rounded-lg text-sm px-6 py-2.5 focus:outline-none disabled:opacity-50"
+          className="text-neutral-white bg-accent-copper-DEFAULT hover:bg-accent-copper-600 focus:ring-4 focus:ring-accent-yellow-100 font-bold rounded-lg text-sm px-6 py-2.5 focus:outline-none disabled:opacity-50"
         >
           {isLoading
             ? isEditing
@@ -374,7 +377,7 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
         </button>
       </div>
     </form>
-  );
+);
 };
 
 export default FormClientes;

@@ -18,9 +18,33 @@ const formatNombre = (nombre) => {
     .replace(/_/g, ' ')
 };
 
+// DireccionCorrespondencia.jsx
 const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => {
+  console.log('DireccionCorrespondencia props:', { direccion, peruData, errors });
+
+  // Guard para direccion
+  if (!direccion) {
+    console.error('DireccionCorrespondencia: direccion prop is undefined or null');
+    return (
+      <div className="bg-accent-yellow-50 border border-accent-yellow-200 text-accent-copper-600 px-4 py-3 rounded mb-4">
+        Error: Dirección de correspondencia no disponible
+      </div>
+    );
+  }
+
+  // Guard para peruData
+  if (!peruData || typeof peruData !== 'object' || Object.keys(peruData).length === 0) {
+    console.error('DireccionCorrespondencia: peruData is undefined, null, or empty', peruData);
+    return (
+      <div className="bg-accent-yellow-50 border border-accent-yellow-200 text-accent-copper-600 px-4 py-3 rounded mb-4">
+        Error: Datos de Perú no disponibles
+      </div>
+    );
+  }
+
   const inputClass = (field) =>
-    `shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors[`direccionCorrespondencia.${field}`] ? 'border-red-500' : 'border-yellow-300'
+    `shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+      errors[`direccionCorrespondencia.${field}`] ? 'border-red-500' : 'border-yellow-300'
     }`;
 
   const handleDepartamentoChange = (e) => {
@@ -42,7 +66,7 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
     <div className="bg-white shadow-md rounded-lg p-6">
       <div className="flex items-center mb-4">
         <div className="w-2 h-8 bg-red-600 mr-3 rounded" />
-        <h3 className="text-lg font-medium text-red-700">DIRECCIÓN DE CORRESPONDENCIA/NEGOCIO</h3>
+        <h3 className="text-lg console.log('peruData en DireccionCorrespondencia:', peruData);font-medium text-red-700">DIRECCIÓN DE CORRESPONDENCIA/NEGOCIO</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {fields.map(({ key, label, type, placeholder, autoComplete, maxLength }) => (
@@ -93,9 +117,13 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
             aria-invalid={!!errors['direccionCorrespondencia.departamento']}
           >
             <option value="">SELECCIONE...</option>
-            {Object.keys(peruData).map(depto => (
-              <option key={depto} value={depto}>{formatNombre(depto)}</option>
-            ))}
+            {peruData && Object.keys(peruData).length > 0 ? (
+              Object.keys(peruData).map(depto => (
+                <option key={depto} value={depto}>{formatNombre(depto)}</option>
+              ))
+            ) : (
+              <option value="" disabled>No hay departamentos disponibles</option>
+            )}
           </select>
           {errors['direccionCorrespondencia.departamento'] && (
             <p className="text-red-500 text-xs mt-1">{errors['direccionCorrespondencia.departamento']}</p>
@@ -110,15 +138,18 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
             name="direccionCorrespondencia.provincia"
             value={direccion?.provincia || ''}
             onChange={handleProvinciaChange}
-            disabled={!direccion?.departamento}
+            disabled={!direccion?.departamento || !peruData[direccion.departamento]}
             className={inputClass('provincia')}
             aria-invalid={!!errors['direccionCorrespondencia.provincia']}
           >
             <option value="">SELECCIONE...</option>
-            {direccion?.departamento &&
+            {direccion?.departamento && peruData[direccion.departamento] ? (
               Object.keys(peruData[direccion.departamento]).map(prov => (
                 <option key={prov} value={prov}>{formatNombre(prov)}</option>
-              ))}
+              ))
+            ) : (
+              <option value="" disabled>Seleccione un departamento primero</option>
+            )}
           </select>
           {errors['direccionCorrespondencia.provincia'] && (
             <p className="text-red-500 text-xs mt-1">{errors['direccionCorrespondencia.provincia']}</p>
@@ -133,16 +164,18 @@ const DireccionCorrespondencia = ({ direccion, peruData, errors, onChange }) => 
             name="direccionCorrespondencia.distrito"
             value={direccion?.distrito || ''}
             onChange={e => onChange(e.target.name, e.target.value)}
-            disabled={!direccion?.provincia}
+            disabled={!direccion?.provincia || !peruData[direccion.departamento]?.[direccion.provincia]}
             className={inputClass('distrito')}
             aria-invalid={!!errors['direccionCorrespondencia.distrito']}
           >
             <option value="">SELECCIONE...</option>
-            {direccion?.departamento &&
-              direccion?.provincia &&
+            {direccion?.departamento && direccion?.provincia && peruData[direccion.departamento]?.[direccion.provincia] ? (
               peruData[direccion.departamento][direccion.provincia].map(dist => (
                 <option key={dist} value={dist}>{dist}</option>
-              ))}
+              ))
+            ) : (
+              <option value="" disabled>Seleccione una provincia primero</option>
+            )}
           </select>
           {errors['direccionCorrespondencia.distrito'] && (
             <p className="text-red-500 text-xs mt-1">{errors['direccionCorrespondencia.distrito']}</p>

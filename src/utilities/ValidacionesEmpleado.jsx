@@ -20,6 +20,22 @@ export const transformInitialData = (data = {}) => {
     console.warn('transformInitialData: cuentas_bancarias/cuentasBancarias is missing or not an array', data.datos);
   }
 
+  // Normalizar claves para que coincidan con peruData
+  const normalizeKey = (key) => (key ? key.replace(/ /g, '_').toUpperCase() : '');
+
+  // Normalizar direcciones
+  const direcciones = Array.isArray(data.datos?.direcciones) && data.datos.direcciones.length
+    ? data.datos.direcciones.map(dir => ({
+        ...dir,
+        departamento: normalizeKey(dir.departamento),
+        provincia: normalizeKey(dir.provincia),
+        distrito: dir.distrito || ''
+      }))
+    : [
+        { tipo: 'FISCAL', tipoVia: '', nombreVia: '', numeroMz: '', urbanizacion: '', departamento: '', provincia: '', distrito: '' },
+        { tipo: 'CORRESPONDENCIA', tipoVia: '', nombreVia: '', numeroMz: '', urbanizacion: '', departamento: '', provincia: '', distrito: '' }
+      ];
+
   return {
     idUsuario: data.idUsuario || '',
     username: data.username || '',
@@ -36,19 +52,13 @@ export const transformInitialData = (data = {}) => {
       fechaCaducidadDni: data.datos?.fechaCaducidadDni || '',
       ruc: data.datos?.ruc || '',
     },
-    direcciones: Array.isArray(data.datos?.direcciones) && data.datos.direcciones.length
-      ? data.datos.direcciones
-      : [
-          { tipo: 'FISCAL', tipoVia: '', nombreVia: '', numeroMz: '', urbanizacion: '', departamento: '', provincia: '', distrito: '' },
-          { tipo: 'CORRESPONDENCIA', tipoVia: '', nombreVia: '', numeroMz: '', urbanizacion: '', departamento: '', provincia: '', distrito: '' }
-        ],
+    direcciones,
     contactos: Array.isArray(data.datos?.contactos) && data.datos.contactos.length
       ? data.datos.contactos
       : [{ tipo: 'PRINCIPAL', telefono: '', email: '' }],
     financiera: financieraData
   };
 };
-
 // ValidacionesEmpleado.js
 export const validateFields = (formData, isEditing, editPassword) => {
   const errors = {};
