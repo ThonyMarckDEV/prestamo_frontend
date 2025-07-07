@@ -80,12 +80,12 @@ const AsesoresCard = ({ asesor, onStatusChange, onEdit }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden border border-yellow-200 hover:shadow-lg transition-shadow duration-300">
-      <div className="border-t-4 border-red-600"></div>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden border border-primary hover:shadow-lg transition-shadow duration-300">
+      <div className="border-t-4 border-primary-600"></div>
       <div className="p-4 sm:p-5">
         <div className="flex flex-col sm:flex-row justify-between sm:items-start mb-4 gap-2">
           <div>
-            <h3 className="text-xl font-semibold text-red-800">
+            <h3 className="text-xl font-semibold text-primary-600">
               {asesor.datos?.nombre || ''} {asesor.datos?.apellidoPaterno || ''} {asesor.datos?.apellidoMaterno || ''} {asesor.datos?.apellidoConyuge || ''}
               <span className="text-sm text-gray-500"> ({asesor.datos.estadoCivil || 'No registrado'})</span>
             </h3>
@@ -155,11 +155,11 @@ const AsesoresCard = ({ asesor, onStatusChange, onEdit }) => {
         </div>
       </div>
 
-      <div className="bg-red-50 px-4 py-3 border-t border-yellow-200 text-sm flex justify-between items-center">
+      <div className="bg-primary-100 px-4 py-3 border-t border-primary-600 text-sm flex justify-between items-center">
         <span className="text-xs text-gray-500">ID: {asesor.idUsuario}</span>
         <button
           onClick={handleEdit}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-4 rounded transition duration-200 flex items-center"
+          className="bg-accent-yellow-400 hover:bg-accent-yellow-600 text-white font-medium py-1 px-4 rounded transition duration-200 flex items-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />

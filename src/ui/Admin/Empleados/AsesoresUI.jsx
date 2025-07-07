@@ -176,7 +176,7 @@ const AsesoresUI = () => {
             <button
               onClick={toggleForm}
               className={`${
-                isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700'
+                isEditing || showForm ? 'bg-gray-500 hover:bg-gray-600' : 'bg-accent-yellow-400 hover:bg-accent-yellow-600'
               } text-white font-bold py-2 px-4 rounded flex items-center w-full sm:w-auto justify-center`}
             >
               {isEditing ? 'CANCELAR EDICIÓN' : (showForm ? (
@@ -198,8 +198,8 @@ const AsesoresUI = () => {
           </div>
 
           {showForm && (
-            <div className="mb-4 bg-white rounded shadow border-t-4 border-red-600">
-              <div className="bg-gradient-to-r from-red-600 to-yellow-500 text-white p-3 rounded-t font-semibold flex justify-between items-center">
+            <div className="mb-4 bg-white rounded shadow border-t-4 border-primary-600">
+              <div className="bg-gradient-to-r from-primary to-primary-dark text-white p-3 rounded-t font-semibold flex justify-between items-center">
                 <h2 className="text-lg font-bold">{isEditing ? 'EDITAR EMPLEADO' : 'AGREGAR NUEVO EMPLEADO'}</h2>
                 <button 
                   onClick={resetForm}
@@ -240,7 +240,7 @@ const AsesoresUI = () => {
                     type="text"
                     id="search"
                     placeholder="BUSCAR POR NOMBRE, APELLIDOS O EMAIL..."
-                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -254,7 +254,7 @@ const AsesoresUI = () => {
                 </label>
                 <select
                   id="status"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -271,7 +271,7 @@ const AsesoresUI = () => {
                 </label>
                 <select
                   id="role"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-2 border"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-600 focus:ring-primary-600 sm:text-sm py-2 border"
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
                 >

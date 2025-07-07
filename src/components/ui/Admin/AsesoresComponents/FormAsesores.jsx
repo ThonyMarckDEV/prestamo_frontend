@@ -320,8 +320,8 @@ const FormAsesores = ({ onAsesorAdded, onAsesorUpdated, initialData, isEditing, 
           className={cx(
             'text-white font-bold py-2 px-8 rounded focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed',
             isEditing
-              ? 'bg-yellow-500 hover:bg-yellow-600 focus:ring-yellow-500'
-              : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+              ? 'bg-accent-yellow-400 hover:bg-accent-yellow-600 focus:ring-accent-yellow-400'
+              : 'bg-accent-yellow-400 hover:bg-accent-yellow-600 focus:ring-accent-yellow-400'
           )}
         >
           {isLoading
