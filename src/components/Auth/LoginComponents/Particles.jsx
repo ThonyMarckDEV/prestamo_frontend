@@ -33,7 +33,7 @@ const Particles = ({ loginSuccess }) => {
       particle.style.position = 'absolute';
       particle.style.width = `${size}px`;
       particle.style.height = `${size}px`;
-      particle.style.backgroundColor = '#0A2F52';
+      particle.style.backgroundColor = '#6B1016';
       particle.style.borderRadius = '50%';
       particle.style.opacity = opacity;
       particle.style.left = `${Math.random() * containerWidth}px`;
