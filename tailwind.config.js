@@ -3,16 +3,17 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+
       colors: {
-        primary: {
-          DEFAULT: '#0D3B66', // Azul petróleo profundo
-          dark: '#062A4F',    // Azul más oscuro para headers
-          light: '#2A5D8F',   // Azul más claro
-          soft: '#E6EEF5',    // Fondo suave azulado
-          100: '#E6F0FA',     // Light blue for backgrounds (e.g., status badges)
-          600: '#0A2F52',     // Darker for hover states
-          800: '#071D33',     // Very dark for text or hover
-        },
+      primary: {
+        DEFAULT: '#80131B', // Granate profundo extraído
+        dark: '#600F15',    // Granate más oscuro (20% más oscuro)
+        light: '#A41721',   // Granate más claro (20% más claro)
+        soft: '#FCE4E6',    // Fondo suave rosado-granate
+        100: '#FFF1F2',     // Granate muy claro para fondos
+        600: '#99181F',     // Granate oscuro para hover
+        800: '#4D0B10',     // Granate muy oscuro para texto
+      },
         
         neutral: {
           white: '#FFFFFF',
@@ -46,6 +47,7 @@ module.exports = {
           },
         },
       },
+      
     },
   },
   plugins: [],
