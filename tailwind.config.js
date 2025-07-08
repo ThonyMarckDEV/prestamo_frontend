@@ -5,15 +5,15 @@ module.exports = {
     extend: {
 
       colors: {
-      primary: {
-        DEFAULT: '#80131B', // Granate profundo extraído
-        dark: '#600F15',    // Granate más oscuro (20% más oscuro)
-        light: '#A41721',   // Granate más claro (20% más claro)
-        soft: '#FCE4E6',    // Fondo suave rosado-granate
-        100: '#FFF1F2',     // Granate muy claro para fondos
-        600: '#99181F',     // Granate oscuro para hover
-        800: '#4D0B10',     // Granate muy oscuro para texto
-      },
+        primary: {
+          DEFAULT: '#6B1016', // Granate profundo ligeramente más oscuro que #80131B
+          dark: '#4F0C11',    // Granate más oscuro
+          light: '#8A131A',   // Granate más claro (aun oscuro)
+          soft: '#F8E0E2',    // Fondo suave rosado-granate oscuro
+          100: '#FCEEEF',     // Granate muy claro para fondos
+          600: '#7F161B',     // Granate oscuro para hover
+          800: '#3F080C',     // Granate muy oscuro para texto
+        },
         
         neutral: {
           white: '#FFFFFF',

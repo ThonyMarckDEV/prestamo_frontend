@@ -1,13 +1,13 @@
 // src/utils/colors.js
 module.exports = {
   primary: {
-    DEFAULT: '#0D3B66', // Azul petróleo profundo
-    dark: '#062A4F', // Azul más oscuro para headers
-    light: '#2A5D8F', // Azul más claro
-    soft: '#E6EEF5', // Fondo suave azulado
-    100: '#E6F0FA', // Light blue para fondos
-    600: '#0A2F52', // Más oscuro para hover
-    800: '#071D33', // Muy oscuro para texto o hover
+    DEFAULT: '#6B1016', // Granate profundo ligeramente más oscuro que #80131B
+    dark: '#4F0C11',    // Granate más oscuro
+    light: '#8A131A',   // Granate más claro (aun oscuro)
+    soft: '#F8E0E2',    // Fondo suave rosado-granate oscuro
+    100: '#FCEEEF',     // Granate muy claro para fondos
+    600: '#7F161B',     // Granate oscuro para hover
+    800: '#3F080C',     // Granate muy oscuro para texto
   },
   neutral: {
     white: '#FFFFFF',
