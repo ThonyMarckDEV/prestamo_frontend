@@ -160,131 +160,137 @@ const FormClientes = ({ onClientAdded, onClientUpdated, initialData, isEditing, 
   }, []);
 
   const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-      console.log('handleSubmit ejecutado');
-      setIsLoading(true);
-      setErrors({});
+  async (e) => {
+    e.preventDefault();
+    console.log('handleSubmit ejecutado');
+    setIsLoading(true);
+    setErrors({});
 
-      console.log('formData enviado:', formData);
+    console.log('formData enviado:', formData);
 
-      const validationErrors = validateFields(formData);
-      if (Object.keys(validationErrors).length > 0) {
-        console.log('Errores de validación frontend:', validationErrors);
-        setErrors(validationErrors);
-        toast.error('Por favor corrige los errores en el formulario', { autoClose: 5000 });
+    const validationErrors = validateFields(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      console.log('Errores de validación frontend:', validationErrors);
+      setErrors(validationErrors);
+
+      // Use flattenErrors to get a flat list of error messages
+      const flattenedErrors = flattenErrors(validationErrors);
+      const errorMessages = Object.values(flattenedErrors).join('\n');
+
+      // Display specific validation errors in toast
+      toast.error(errorMessages || 'Por favor corrige los errores en el formulario', {
+        autoClose: 7000,
+        style: { whiteSpace: 'pre-line' },
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const url = isEditing
+        ? `${API_BASE_URL}/api/admin/clientes/${formData.idUsuario}`
+        : `${API_BASE_URL}/api/admin/clientes`;
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const dataToSend = {
+        dni: formData.datos.dni,
+        datos: {
+          nombre: formData.datos.nombre,
+          apellidoPaterno: formData.datos.apellidoPaterno,
+          apellidoMaterno: formData.datos.apellidoMaterno,
+          apellidoConyuge: formData.datos.apellidoConyuge || null,
+          estadoCivil: formData.datos.estadoCivil,
+          fechaCaducidadDni: formData.datos.fechaCaducidadDni,
+          dni: formData.datos.dni,
+          ruc: formData.datos.ruc || null,
+          expuesta: formData.expuesta === 1,
+          aval: formData.aval === 1,
+        },
+        direcciones: formData.direcciones.map((dir) => ({
+          tipoVia: dir.tipoVia || null,
+          nombreVia: dir.nombreVia || null,
+          numeroMz: dir.numeroMz || null,
+          urbanizacion: dir.urbanizacion,
+          departamento: dir.departamento,
+          provincia: dir.provincia,
+          distrito: dir.distrito,
+          tipo: dir.tipo,
+        })),
+        contactos: formData.contactos.map((cont) => ({
+          tipo: cont.tipo,
+          telefono: cont.telefono,
+          telefonoDos: cont.telefonoDos || null,
+          email: cont.email,
+        })),
+        cuentasBancarias: formData.cuentasBancarias.map((cuenta) => ({
+          numeroCuenta: cuenta.numeroCuenta,
+          cci: cuenta.cci || null,
+          entidadFinanciera: cuenta.entidadFinanciera,
+        })),
+        actividadesEconomicas: {
+          noSensibles: formData.actividadesEconomicas.noSensibles
+            ? [formData.actividadesEconomicas.noSensibles.idNoSensible]
+            : [],
+          ciiu: formData.actividadesEconomicas.ciiu
+            ? [formData.actividadesEconomicas.ciiu.idCiiu]
+            : [],
+        },
+      };
+
+      console.log('Enviando datos:', dataToSend);
+
+      const response = await fetchWithAuth(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(dataToSend),
+      });
+
+      console.log('Respuesta de la API:', { status: response.status, statusText: response.statusText });
+
+      const data = await response.json();
+      console.log('Datos de la API:', data);
+
+      if (!response.ok) {
+        if (data.errors) {
+          console.log('Errores del backend:', data.errors);
+          setErrors(data.errors);
+          const flattenedErrors = flattenErrors(data.errors);
+          const errorMessages = Object.values(flattenedErrors).join('\n');
+          toast.error(errorMessages || data.message || 'Error en la validación de los datos', {
+            autoClose: 7000,
+            style: { whiteSpace: 'pre-line' },
+          });
+        } else {
+          const errorMessage = data.message || `Error ${response.status}: ${response.statusText}`;
+          console.log('Error general:', errorMessage);
+          setErrors({ general: errorMessage });
+          toast.error(errorMessage, { autoClose: 5000 });
+        }
         setIsLoading(false);
         return;
       }
 
-      try {
-        const url = isEditing
-          ? `${API_BASE_URL}/api/admin/clientes/${formData.idUsuario}`
-          : `${API_BASE_URL}/api/admin/clientes`;
-        const method = isEditing ? 'PUT' : 'POST';
-
-        const dataToSend = {
-          dni: formData.datos.dni,
-          datos: {
-            nombre: formData.datos.nombre,
-            apellidoPaterno: formData.datos.apellidoPaterno,
-            apellidoMaterno: formData.datos.apellidoMaterno,
-            apellidoConyuge: formData.datos.apellidoConyuge || null,
-            estadoCivil: formData.datos.estadoCivil,
-            fechaCaducidadDni: formData.datos.fechaCaducidadDni,
-            dni: formData.datos.dni,
-            ruc: formData.datos.ruc || null,
-            expuesta: formData.expuesta === 1,
-            aval: formData.aval === 1,
-          },
-          direcciones: formData.direcciones.map((dir) => ({
-            tipoVia: dir.tipoVia || null,
-            nombreVia: dir.nombreVia || null,
-            numeroMz: dir.numeroMz || null,
-            urbanizacion: dir.urbanizacion,
-            departamento: dir.departamento,
-            provincia: dir.provincia,
-            distrito: dir.distrito,
-            tipo: dir.tipo,
-          })),
-          contactos: formData.contactos.map((cont) => ({
-            tipo: cont.tipo,
-            telefono: cont.telefono,
-            telefonoDos: cont.telefonoDos || null,
-            email: cont.email,
-          })),
-          cuentasBancarias: formData.cuentasBancarias.map((cuenta) => ({
-            numeroCuenta: cuenta.numeroCuenta,
-            cci: cuenta.cci || null,
-            entidadFinanciera: cuenta.entidadFinanciera,
-          })),
-          actividadesEconomicas: {
-            noSensibles: formData.actividadesEconomicas.noSensibles
-              ? [formData.actividadesEconomicas.noSensibles.idNoSensible]
-              : [],
-            ciiu: formData.actividadesEconomicas.ciiu
-              ? [formData.actividadesEconomicas.ciiu.idCiiu]
-              : [],
-          },
-        };
-
-        console.log('Enviando datos:', dataToSend);
-
-        const response = await fetchWithAuth(url, {
-          method,
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(dataToSend),
-        });
-
-        console.log('Respuesta de la API:', { status: response.status, statusText: response.statusText });
-
-        const data = await response.json();
-        console.log('Datos de la API:', data);
-
-        if (!response.ok) {
-          if (data.errors) {
-            console.log('Errores del backend:', data.errors);
-            setErrors(data.errors); // Set nested errors for field-specific display
-            const flattenedErrors = flattenErrors(data.errors);
-            if (flattenedErrors.length > 0) {
-              toast.error(flattenedErrors.join('\n'), {
-                autoClose: 7000,
-                style: { whiteSpace: 'pre-line' },
-              });
-            } else {
-              toast.error(data.message || 'Error en la validación de los datos', { autoClose: 5000 });
-            }
-          } else {
-            const errorMessage = data.message || `Error ${response.status}: ${response.statusText}`;
-            console.log('Error general:', errorMessage);
-            setErrors({ general: errorMessage });
-            toast.error(errorMessage, { autoClose: 5000 });
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        const successMessage = `Cliente ${isEditing ? 'actualizado' : 'agregado'} correctamente`;
-        toast.success(successMessage, { autoClose: 3000 });
-        if (isEditing && typeof onClientUpdated === 'function') {
-          onClientUpdated(data);
-        }
-        if (!isEditing && typeof onClientAdded === 'function') {
-          onClientAdded(data);
-        }
-        if (onCancel) onCancel();
-        else if (!isEditing) resetForm();
-      } catch (err) {
-        console.error('Error en la solicitud:', err);
-        const errorMessage = err.message || 'Error de conexión al servidor';
-        setErrors({ general: errorMessage });
-        toast.error(errorMessage, { autoClose: 5000 });
-      } finally {
-        setIsLoading(false);
+      const successMessage = `Cliente ${isEditing ? 'actualizado' : 'agregado'} correctamente`;
+      toast.success(successMessage, { autoClose: 3000 });
+      if (isEditing && typeof onClientUpdated === 'function') {
+        onClientUpdated(data);
       }
-    },
-    [formData, isEditing, onClientAdded, onClientUpdated, onCancel, resetForm]
-  );
+      if (!isEditing && typeof onClientAdded === 'function') {
+        onClientAdded(data);
+      }
+      if (onCancel) onCancel();
+      else if (!isEditing) resetForm();
+    } catch (err) {
+      console.error('Error en la solicitud:', err);
+      const errorMessage = err.message || 'Error de conexión al servidor';
+      setErrors({ general: errorMessage });
+      toast.error(errorMessage, { autoClose: 5000 });
+    } finally {
+      setIsLoading(false);
+    }
+  },
+  [formData, isEditing, onClientAdded, onClientUpdated, onCancel, resetForm]
+);
 
   const memoizedActividades = useMemo(
     () => formData.actividadesEconomicas,
