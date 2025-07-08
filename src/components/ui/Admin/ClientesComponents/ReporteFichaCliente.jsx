@@ -1,8 +1,17 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import FetchWithGif from '../../../Reutilizables/FetchWithGif';
 import logo from '../../../../img/logo/Logo_FICSULLANA.png';
 import { toast } from 'react-toastify';
+import colors from '../../../../utilities/colors'; // Importar colores desde src/utilities/colors.js
+
+// Función para convertir HEX a RGB para jsPDF
+const hexToRgb = (hex) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return [r, g, b];
+};
 
 const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -13,7 +22,7 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
     setIsGenerating(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const datos = cliente.datos || {};
       const direcciones = datos.direcciones || [];
@@ -21,18 +30,21 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
       const cuentasBancarias = datos.cuentas_bancarias || [];
       const actividadesEconomicas = datos.actividades_economicas || [];
 
-      const direccionFiscal = direcciones.find(dir => dir.tipo === 'FISCAL') || {};
-      const direccionCorrespondencia = direcciones.find(dir => dir.tipo === 'CORRESPONDENCIA') || {};
-      const contactoPrincipal = contactos.find(cont => cont.tipo === 'PRINCIPAL') || {};
+      const direccionFiscal = direcciones.find((dir) => dir.tipo === 'FISCAL') || {};
+      const direccionCorrespondencia = direcciones.find((dir) => dir.tipo === 'CORRESPONDENCIA') || {};
+      const contactoPrincipal = contactos.find((cont) => cont.tipo === 'PRINCIPAL') || {};
       const cuentaPrincipal = cuentasBancarias[0] || {};
 
-      const actividadNoSensible = actividadesEconomicas.find(act => act.idNoSensible && act.no_sensible)?.no_sensible.actividad || 'No registrado';
-      const actividadCIIU = actividadesEconomicas.find(act => act.idCiiu && act.ciiu)?.ciiu.descripcion || 'No registrado';
+      const actividadNoSensible =
+        actividadesEconomicas.find((act) => act.idNoSensible && act.no_sensible)?.no_sensible.actividad ||
+        'No registrado';
+      const actividadCIIU =
+        actividadesEconomicas.find((act) => act.idCiiu && act.ciiu)?.ciiu.descripcion || 'No registrado';
 
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
       });
 
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -61,22 +73,22 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
       const addLogo = async () => {
         try {
           const logoBase64 = await getBase64FromImage(logo);
-          const logoWidth = 48;
-          const logoHeight = 51;
+          const logoWidth = 40;
+          const logoHeight = 25;
           const logoX = margin;
           const headerY = 9;
           doc.addImage(logoBase64, 'PNG', logoX, headerY, logoWidth, logoHeight);
         } catch {
-          const logoWidth = 35;
-          const logoHeight = 38;
+          const logoWidth = 40;
+          const logoHeight = 25;
           const logoX = margin;
-          doc.setFillColor(255, 255, 255);
-          doc.setDrawColor(230, 0, 0);
+          doc.setFillColor(...hexToRgb(colors.neutral.white));
+          doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el borde
           doc.setLineWidth(2);
           doc.roundedRect(logoX, y, logoWidth, logoHeight, 3, 3, 'FD');
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(10);
-          doc.setTextColor(230, 0, 0);
+          doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el texto
           doc.text('FICS', logoX + logoWidth / 2, y + 15, { align: 'center' });
           doc.text('ULLANA', logoX + logoWidth / 2, y + 25, { align: 'center' });
         }
@@ -84,14 +96,13 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
 
       await addLogo();
 
-      const capitalizar = (str) => typeof str === 'string'
-        ? str.replace(/_/g, ' ') : '-';
+      const capitalizar = (str) => (typeof str === 'string' ? str.replace(/_/g, ' ') : '-');
 
       const textX = pageWidth - margin;
       const headerY = 27;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(12);
-      doc.setTextColor(44, 62, 80);
+      doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el encabezado
       doc.text('FICHA DE CLIENTE', textX, headerY + 6, { align: 'right' });
       doc.setFontSize(10);
       doc.text('[PERSONA NATURAL]', textX, headerY + 12, { align: 'right' });
@@ -99,11 +110,11 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
       y += 33;
 
       const drawSection = (title, height = 6) => {
-        doc.setFillColor(230, 0, 0);
+        doc.setFillColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el fondo de secciones
         doc.rect(margin, y, pageWidth - 2 * margin, height, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...hexToRgb(colors.neutral.white)); // Mantener blanco para el texto de secciones
         doc.text(title, margin + 5, y + 4.5);
         y += height + 1;
         return y;
@@ -127,13 +138,13 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
 
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(9);
-          doc.setTextColor(108, 122, 137);
+          doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para etiquetas
           doc.text((itemLeft.label || '-') + ':', xLeft, y);
           if (itemRight) doc.text((itemRight.label || '-') + ':', xRight, y);
 
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(9);
-          doc.setTextColor(44, 62, 80);
+          doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para valores
           for (let l = 0; l < numLines; l++) {
             if (valueLeft[l]) doc.text(valueLeft[l], xLeft, y + 3.5 + l * 4);
             if (itemRight && valueRight[l]) doc.text(valueRight[l], xRight, y + 3.5 + l * 4);
@@ -151,7 +162,7 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
         { label: 'Nombre y Apellidos', value: `${datos.nombre || ''} ${datos.apellidoPaterno || ''} ${datos.apellidoMaterno || ''}`.trim() },
         { label: 'Estado Civil', value: datos.estadoCivil },
         { label: 'Expuesto Políticamente', value: datos.expuesta ? 'Sí' : 'No' },
-        { label: 'Fecha de Caducidad DNI', value: datos.fechaCaducidadDni }
+        { label: 'Fecha de Caducidad DNI', value: datos.fechaCaducidadDni },
       ]);
 
       drawSection('2. DIRECCIÓN FISCAL');
@@ -162,7 +173,7 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
         { label: 'Urbanización/Caserío', value: direccionFiscal.urbanizacion },
         { label: 'Distrito', value: capitalizar(direccionFiscal.distrito) },
         { label: 'Provincia', value: capitalizar(direccionFiscal.provincia) },
-        { label: 'Departamento', value: capitalizar(direccionFiscal.departamento) }
+        { label: 'Departamento', value: capitalizar(direccionFiscal.departamento) },
       ]);
 
       drawSection('3. DIRECCIÓN DE CORRESPONDENCIA');
@@ -173,43 +184,43 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
         { label: 'Urbanización/Caserío', value: direccionCorrespondencia.urbanizacion },
         { label: 'Distrito', value: capitalizar(direccionCorrespondencia.distrito) },
         { label: 'Provincia', value: capitalizar(direccionCorrespondencia.provincia) },
-        { label: 'Departamento', value: capitalizar(direccionCorrespondencia.departamento) }
+        { label: 'Departamento', value: capitalizar(direccionCorrespondencia.departamento) },
       ]);
 
       drawSection('4. INFORMACIÓN DE CONTACTO');
       drawInfoBox([
         { label: 'Teléfono Principal', value: contactoPrincipal.telefono },
         { label: 'Teléfono Secundario', value: contactoPrincipal.telefonoDos },
-        { label: 'E-mail', value: contactoPrincipal.email }
+        { label: 'E-mail', value: contactoPrincipal.email },
       ]);
 
       drawSection('5. INFORMACIÓN FINANCIERA');
       drawInfoBox([
         { label: 'Número de Cuenta', value: cuentaPrincipal.numeroCuenta },
         { label: 'CCI', value: cuentaPrincipal.cci },
-        { label: 'Entidad Financiera', value: cuentaPrincipal.entidadFinanciera }
+        { label: 'Entidad Financiera', value: cuentaPrincipal.entidadFinanciera },
       ]);
 
       drawSection('6. ACTIVIDADES ECONÓMICAS');
       const actividadCiiuLines = doc.splitTextToSize(actividadCIIU, (pageWidth - 2 * margin) / 2 - 6);
       drawInfoBox([
         { label: 'Actividad CIIU', value: actividadCiiuLines },
-        { label: 'Actividad No Sensible', value: actividadNoSensible }
+        { label: 'Actividad No Sensible', value: actividadNoSensible },
       ]);
 
       y += 0;
-      doc.setDrawColor(230, 0, 0);
+      doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para la línea divisoria
       doc.setLineWidth(0.7);
       doc.line(margin, y, pageWidth - margin, y);
 
       y += 5;
       const firmaWidth = (pageWidth - 4 * margin) / 2;
-      doc.setDrawColor(200, 200, 200);
+      doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para los rectángulos de firma
       doc.setLineWidth(0.5);
       doc.rect(margin, y, firmaWidth, 20);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(7);
-      doc.setTextColor(108, 122, 137);
+      doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para texto de firma
       doc.text('FIRMA DEL CLIENTE', margin + firmaWidth / 2, y + 16, { align: 'center' });
 
       doc.rect(margin + firmaWidth + margin, y, firmaWidth, 20);
@@ -220,7 +231,7 @@ const PDFViewer = ({ cliente, onComplete, onPDFGenerated }) => {
 
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
+      doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el pie de página
       doc.text(`Documento generado automáticamente el ${fechaActual}`, pageWidth / 2, y, { align: 'center' });
       y += 3;
       doc.text('FIC SULLANA', pageWidth / 2, y, { align: 'center' });

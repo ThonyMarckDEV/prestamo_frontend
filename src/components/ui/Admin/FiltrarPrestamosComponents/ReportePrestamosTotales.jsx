@@ -4,6 +4,15 @@ import { format, parseISO } from 'date-fns';
 import FetchWithGif from '../../../../components/Reutilizables/FetchWithGif';
 import logo from '../../../../img/logo/Logo_FICSULLANA.png';
 import { toast } from 'react-toastify';
+import colors from '../../../../utilities/colors'; // Importar colores desde src/utilities/colors.js
+
+// Función para convertir HEX a RGB para jsPDF
+const hexToRgb = (hex) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return [r, g, b];
+};
 
 const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAsesor, onComplete, onPDFGenerated }) => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -29,7 +38,7 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
       });
 
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -66,11 +75,11 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
 
       const drawSection = (title, height = 6) => {
         checkPageSpace(height + 5);
-        doc.setFillColor(230, 0, 0);
+        doc.setFillColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el fondo de secciones
         doc.rect(margin, y, pageWidth - 2 * margin, height, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...hexToRgb(colors.neutral.white)); // Mantener blanco para el texto de secciones
         doc.text(title, margin + 5, y + 4.5);
         y += height + 1;
         return y;
@@ -84,11 +93,11 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
           const xPos = index % 2 === 0 ? margin + 6 : margin + (pageWidth - 2 * margin) / 2 + 6;
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(8);
-          doc.setTextColor(108, 122, 137);
+          doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para etiquetas
           doc.text(item.label + ':', xPos, y);
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(9);
-          doc.setTextColor(44, 62, 80);
+          doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para valores
           const maxWidth = (pageWidth - 2 * margin) / 2 - 15;
           const wrappedText = doc.splitTextToSize(item.value || '-', maxWidth);
           doc.text(wrappedText[0], xPos, y + 3);
@@ -101,61 +110,64 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
       const addLogo = async () => {
         try {
           const logoBase64 = await getBase64FromImage(logo);
-          const logoWidth = 45;
-          const logoHeight = 50;
+          const logoWidth = 55;
+          const logoHeight = 35;
           const logoX = (pageWidth - logoWidth) / 2;
           doc.addImage(logoBase64, 'PNG', logoX, 8, logoWidth, logoHeight);
         } catch (error) {
           console.warn('No se pudo cargar el logo, usando texto alternativo');
-          const logoWidth = 45;
-          const logoHeight = 50;
+          const logoWidth = 40;
+          const logoHeight = 35;
           const logoX = (pageWidth - logoWidth) / 2;
-          doc.setFillColor(255, 255, 255);
-          doc.setDrawColor(230, 0, 0);
+          doc.setFillColor(...hexToRgb(colors.neutral.white)); // Mantener blanco para el fondo
+          doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el borde
           doc.setLineWidth(2);
           doc.roundedRect(logoX, 8, logoWidth, logoHeight, 3, 3, 'FD');
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(12);
-          doc.setTextColor(230, 0, 0);
+          doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el texto
           doc.text('FICS', logoX + logoWidth / 2, 28, { align: 'center' });
           doc.text('ULLANA', logoX + logoWidth / 2, 38, { align: 'center' });
         }
       };
 
       // Header Section
-      doc.setFillColor(240, 248, 255);
+      doc.setFillColor(...hexToRgb(colors.neutral.softWhite)); // Mantener softWhite para el fondo del header
       doc.rect(0, 0, pageWidth, 70, 'F');
       doc.setLineWidth(3);
-      doc.setDrawColor(230, 0, 0);
+      doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para la línea superior
       doc.line(0, 0, pageWidth, 0);
 
       await addLogo();
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(18);
-      doc.setTextColor(44, 62, 80);
+      doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el título
       doc.text('REPORTE DE PRÉSTAMOS', pageWidth / 2, 55, { align: 'center' });
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
-      doc.setTextColor(108, 122, 137);
+      doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para la fecha
       const fechaActual = new Date().toLocaleDateString('es-PE', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
       doc.text(`Generado el ${fechaActual}`, pageWidth / 2, 60, { align: 'center' });
 
       y = 78;
 
       // Client Info Section
-      const selectedClientData = clients.find(client => client.idUsuario === selectedClient);
+      const selectedClientData = clients.find((client) => client.idUsuario === selectedClient);
       if (selectedClientData) {
         drawSection('1. INFORMACIÓN DEL CLIENTE');
         const clientInfo = [
-          { label: 'Nombre Completo', value: `${selectedClientData.nombre} ${selectedClientData.apellidoPaterno} ${selectedClientData.apellidoMaterno}` },
+          {
+            label: 'Nombre Completo',
+            value: `${selectedClientData.nombre} ${selectedClientData.apellidoPaterno} ${selectedClientData.apellidoMaterno}`,
+          },
           { label: 'DNI', value: selectedClientData.dni },
-          { label: 'ID Cliente', value: selectedClient }
+          { label: 'ID Cliente', value: selectedClient },
         ];
         drawInfoBox(clientInfo, 22);
       }
@@ -170,7 +182,7 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
         y += 6;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
-        doc.setTextColor(44, 62, 80);
+        doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el subtítulo
         doc.text(`Préstamo #${loan.idPrestamo}`, margin + 5, y + 7);
 
         y += 12;
@@ -197,12 +209,12 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
 
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(8);
-          doc.setTextColor(100, 100, 100);
+          doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para etiquetas
           doc.text(`${item.label}:`, xPos, yPos);
 
           doc.setFont('helvetica', 'normal');
           doc.setFontSize(8);
-          doc.setTextColor(44, 62, 80);
+          doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para valores
           const maxWidth = (pageWidth - 2 * margin) / 2 - 25;
           const wrappedText = doc.splitTextToSize(item.value, maxWidth);
           doc.text(wrappedText[0], xPos + 35, yPos);
@@ -214,18 +226,18 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
 
       // Footer Section
       checkPageSpace(35);
-      doc.setDrawColor(230, 0, 0);
+      doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para la línea divisoria
       doc.setLineWidth(1);
       doc.line(margin, y + 5, pageWidth - margin, y + 5);
 
       y += 15;
       const firmaWidth = (pageWidth - 3 * margin) / 2;
-      doc.setDrawColor(200, 200, 200);
+      doc.setDrawColor(...hexToRgb(colors.primary.light)); // Usar primary.light para los rectángulos de firma
       doc.setLineWidth(0.5);
       doc.rect(margin, y, firmaWidth, 18);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
-      doc.setTextColor(108, 122, 137);
+      doc.setTextColor(...hexToRgb(colors.accent.steel.DEFAULT)); // Mantener steel para texto de firma
       doc.text('FIRMA DEL CLIENTE', margin + firmaWidth / 2, y + 13, { align: 'center' });
       doc.rect(margin + firmaWidth + margin, y, firmaWidth, 18);
       doc.text('HUELLA DACTILAR', margin + firmaWidth + margin + firmaWidth / 2, y + 13, { align: 'center' });
@@ -233,7 +245,7 @@ const LoanReportViewer = ({ loans, selectedClient, clients, asesores, selectedAs
       y += 23;
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(7);
-      doc.setTextColor(150, 150, 150);
+      doc.setTextColor(...hexToRgb(colors.primary.light)); // Usar primary.light para el pie de página
       doc.text(`Documento generado automáticamente el ${fechaActual}`, pageWidth / 2, y, { align: 'center' });
       if (selectedClientData) {
         doc.text(`ID Cliente: ${selectedClient}`, pageWidth / 2, y + 3, { align: 'center' });
