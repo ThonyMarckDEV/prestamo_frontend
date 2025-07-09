@@ -6,24 +6,24 @@ import ComprobanteModal from './ComprobanteModal';
 import CapturaAbonoModal from './CapturaAbonoModal';
 import ReportePrestamosTotales from './ReportePrestamosTotales';
 import DetallePrestamoCuotas from './DetallePrestamoCuotas';
+import GrupoSearch from './GrupoSearch';
 import { format, parseISO } from 'date-fns';
+import { toast } from 'react-toastify';
 
 const ITEMS_PER_PAGE = 4;
 
 const FiltrarPrestamos = () => {
   const [isGroupSearch, setIsGroupSearch] = useState(false);
   const [query, setQuery] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedClient, setSelectedClient] = useState('');
   const [selectedLoan, setSelectedLoan] = useState('');
   const [estado, setEstado] = useState('');
   const [selectedAsesor, setSelectedAsesor] = useState('');
-  const [groups, setGroups] = useState([]);
   const [clients, setClients] = useState([]);
   const [loans, setLoans] = useState([]);
   const [asesores, setAsesores] = useState([]);
   const [cuotas, setCuotas] = useState([]);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingAdvisors, setLoadingAdvisors] = useState(false);
   const [clientPage, setClientPage] = useState(1);
@@ -45,28 +45,24 @@ const FiltrarPrestamos = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetchGroups();
     fetchAdvisors();
   }, []);
-
-  const fetchGroups = async () => {
-    try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/groups`);
-      const data = await response.json();
-      setGroups(data);
-    } catch (err) {
-      setError('Error al cargar los grupos');
-    }
-  };
 
   const fetchAdvisors = async () => {
     try {
       setLoadingAdvisors(true);
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/advisors`);
+      if (!response.ok) throw new Error('Error al cargar asesores');
       const data = await response.json();
-      setAsesores(data);
+      const validAsesores = Array.isArray(data.asesores)
+        ? data.asesores.filter(asesor => asesor && asesor.id && asesor.nombre)
+        : [];
+      setAsesores(validAsesores);
+      if (validAsesores.length === 0) {
+        toast.warn('No se encontraron asesores válidos', { autoClose: 5000 });
+      }
     } catch (err) {
-      setError('Error al cargar los asesores');
+      toast.error('Error al cargar asesores', { autoClose: 5000 });
     } finally {
       setLoadingAdvisors(false);
     }
@@ -74,10 +70,10 @@ const FiltrarPrestamos = () => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (isGroupSearch && selectedGroup) {
-        fetchClients({ group_id: selectedGroup, search: clientSearch, with_loans: filterClientsWithLoans });
+      if (isGroupSearch && selectedGroup?.idGrupo) {
+        fetchClients({ idGrupo: selectedGroup.idGrupo, search: clientSearch, with_loans: filterClientsWithLoans });
       } else if (!isGroupSearch && selectedAsesor) {
-        fetchClients({ advisor_id: selectedAsesor, search: clientSearch, with_loans: filterClientsWithLoans });
+        fetchClients({ idAsesor: selectedAsesor, search: clientSearch, with_loans: filterClientsWithLoans });
       } else if (!isGroupSearch && query) {
         fetchClients({ search: query, with_loans: filterClientsWithLoans });
       } else {
@@ -98,17 +94,30 @@ const FiltrarPrestamos = () => {
     try {
       setLoading(true);
       setShowLoadingGif(true);
-      const queryString = new URLSearchParams(params).toString();
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(([_, v]) => v !== '')
+      );
+      const queryString = new URLSearchParams(cleanParams).toString();
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/clients?${queryString}`);
+      if (!response.ok) throw new Error('Error al cargar clientes');
       const data = await response.json();
-      setClients(data);
+      if (!data.success) {
+        throw new Error(data.error || 'Error al cargar clientes');
+      }
+      setClients(Array.isArray(data.data) ? data.data : []);
       setSelectedClient('');
       setLoans([]);
       setSelectedLoan('');
       setCuotas([]);
       setClientPage(1);
+      if (data.data.length === 0 && data.message) {
+        toast.warn(data.message, { autoClose: 5000 });
+      } else {
+        toast.success('Clientes cargados correctamente', { autoClose: 5000 });
+      }
     } catch (err) {
-      setError('Error al cargar los clientes');
+      toast.error(err.message || 'Error al cargar clientes', { autoClose: 5000 });
+      setClients([]);
     } finally {
       setLoading(false);
       setShowLoadingGif(false);
@@ -127,64 +136,76 @@ const FiltrarPrestamos = () => {
   }, [selectedClient, loanPage]);
 
   const fetchLoans = async (params) => {
-      try {
-          setLoading(true);
-          setShowLoadingGif(true);
-          const cleanParams = Object.fromEntries(
-              Object.entries(params).filter(([_, v]) => v !== '')
-          );
-          // Add advisor_id to the params if selectedAsesor exists
-          if (selectedAsesor) {
-              cleanParams.advisor_id = selectedAsesor;
-          }
-          const queryString = new URLSearchParams(cleanParams).toString();
-          const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/loans?${queryString}`);
-          const data = await response.json();
-          setLoans(data.data || []);
-          setSelectedLoan('');
-          setCuotas([]);
-      } catch (err) {
-          setError('Error al cargar los préstamos');
-      } finally {
-          setLoading(false);
-          setShowLoadingGif(false);
-      }
-  };
-
-  useEffect(() => {
-    if (selectedLoan) {
-      handleFilter();
-    } else {
-      setCuotas([]);
-    }
-  }, [selectedLoan, estado]);
-
-  const handleFilter = async () => {
-    if (!selectedLoan) {
-      setCuotas([]);
-      return;
-    }
-
     try {
       setLoading(true);
       setShowLoadingGif(true);
-      const params = { loan_id: selectedLoan };
-      if (estado) params.estado = estado;
-
-      const queryString = new URLSearchParams(params).toString();
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/installments?${queryString}`);
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(([_, v]) => v !== '')
+      );
+      if (selectedAsesor) {
+        cleanParams.idAsesor = selectedAsesor;
+      }
+      const queryString = new URLSearchParams(cleanParams).toString();
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/loans?${queryString}`);
+      if (!response.ok) throw new Error('Error al cargar préstamos');
       const data = await response.json();
-      setCuotas(data);
-      setError('');
+      if (!data.success) {
+        throw new Error(data.error || 'Error al cargar préstamos');
+      }
+      setLoans(Array.isArray(data.data) ? data.data : []);
+      setSelectedLoan('');
+      setCuotas([]);
+      if (data.data.length === 0) {
+        toast.warn('No se encontraron préstamos para el cliente seleccionado', { autoClose: 5000 });
+      } else {
+        toast.success('Préstamos cargados correctamente', { autoClose: 5000 });
+      }
     } catch (err) {
-      setError('Error al filtrar las cuotas');
+      toast.error(err.message || 'Error al cargar préstamos', { autoClose: 5000 });
+      setLoans([]);
     } finally {
       setLoading(false);
       setShowLoadingGif(false);
     }
   };
 
-  // Ensure HTTPS for non-localhost URLs
+  const fetchInstallments = async (loanId, estado = '') => {
+    try {
+      setLoading(true);
+      setShowLoadingGif(true);
+      const params = { loan_id: loanId };
+      if (estado) params.estado = estado;
+      const queryString = new URLSearchParams(params).toString();
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/installments?${queryString}`);
+      if (!response.ok) throw new Error('Error al filtrar cuotas');
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Error al filtrar cuotas');
+      }
+      setCuotas(Array.isArray(data.data) ? data.data : []);
+      if (data.data.length === 0) {
+        toast.warn(`No se encontraron cuotas${estado ? ` con estado "${estado}"` : ''}`, { autoClose: 5000 });
+      } else {
+        toast.success('Cuotas cargadas correctamente', { autoClose: 5000 });
+      }
+    } catch (err) {
+      toast.error(err.message || 'Error al cargar cuotas', { autoClose: 5000 });
+      setCuotas([]);
+    } finally {
+      setLoading(false);
+      setShowLoadingGif(false);
+    }
+  };
+
+  const handleFilter = async () => {
+    if (!selectedLoan) {
+      setCuotas([]);
+      toast.error('Por favor, selecciona un préstamo', { autoClose: 5000 });
+      return;
+    }
+    fetchInstallments(selectedLoan, estado);
+  };
+
   const ensureHttpsUrl = (url) => {
     if (!url) return url;
     if (url.includes('localhost') || url.includes('127.0.0.1')) {
@@ -202,13 +223,12 @@ const FiltrarPrestamos = () => {
         throw new Error(data.message || 'Error al obtener el comprobante');
       }
       const comprobanteUrl = data.comprobante_url ? ensureHttpsUrl(data.comprobante_url) : '';
-      console.log('Original comprobante URL:', data.comprobante_url);
-      console.log('Transformed comprobante URL:', comprobanteUrl);
       setComprobanteData({ comprobanteUrl });
       setComprobanteError('');
     } catch (err) {
       setComprobanteError(err.message || 'Error al obtener el comprobante');
       setComprobanteData({ comprobanteUrl: '' });
+      toast.error(err.message || 'Error al obtener el comprobante', { autoClose: 5000 });
     } finally {
       setLoadingComprobante(false);
     }
@@ -229,7 +249,7 @@ const FiltrarPrestamos = () => {
   const handleClearFilters = () => {
     setIsGroupSearch(false);
     setQuery('');
-    setSelectedGroup('');
+    setSelectedGroup(null);
     setSelectedClient('');
     setSelectedLoan('');
     setEstado('');
@@ -237,7 +257,6 @@ const FiltrarPrestamos = () => {
     setClients([]);
     setLoans([]);
     setCuotas([]);
-    setError('');
     setClientPage(1);
     setLoanPage(1);
     setClientSearch('');
@@ -248,6 +267,7 @@ const FiltrarPrestamos = () => {
     setReportType('');
     setShowModal(false);
     setPdfUrl(null);
+    toast.info('Filtros limpiados', { autoClose: 5000 });
   };
 
   const handleClientClick = (clientId) => {
@@ -267,6 +287,10 @@ const FiltrarPrestamos = () => {
   const handleLoanClick = (loanId) => {
     if (selectedLoan !== loanId) {
       setSelectedLoan(loanId);
+      fetchInstallments(loanId, estado);
+    } else {
+      setSelectedLoan('');
+      setCuotas([]);
     }
   };
 
@@ -431,7 +455,7 @@ const FiltrarPrestamos = () => {
             onChange={() => {
               setIsGroupSearch(!isGroupSearch);
               setSelectedAsesor('');
-              setSelectedGroup('');
+              setSelectedGroup(null);
               setClients([]);
               setSelectedClient('');
               setSelectedLoan('');
@@ -453,10 +477,10 @@ const FiltrarPrestamos = () => {
               <label className="block text-sm font-medium Emulator Ideal Sans, -apple-system, system-ui, sans-serif text-gray-700 mb-1">
                 SELECCIONAR GRUPO
               </label>
-              <select
-                value={selectedGroup}
-                onChange={(e) => {
-                  setSelectedGroup(e.target.value);
+              <GrupoSearch
+                selectedGroup={selectedGroup}
+                onSelect={(group) => {
+                  setSelectedGroup(group);
                   setSelectedAsesor('');
                   setSelectedClient('');
                   setSelectedLoan('');
@@ -464,15 +488,9 @@ const FiltrarPrestamos = () => {
                   setClientPage(1);
                   setFilterClientsWithLoans(false);
                 }}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
-              >
-                <option value="">SELECCIONE GRUPO</option>
-                {groups.map(group => (
-                  <option key={group.idGrupo} value={group.idGrupo}>
-                    {group.nombre}
-                  </option>
-                ))}
-              </select>
+                onRemove={() => setSelectedGroup(null)}
+                errors={null}
+              />
             </div>
           ) : (
             <div className="md:col-span-2">
@@ -483,7 +501,7 @@ const FiltrarPrestamos = () => {
                 type="text"
                 value={query}
                 onChange={(e) => {
-                  setQuery(e.target.value.toUpperCase()); // Convert input to uppercase
+                  setQuery(e.target.value.toUpperCase());
                   setSelectedClient('');
                   setSelectedLoan('');
                   setCuotas([]);
@@ -500,7 +518,12 @@ const FiltrarPrestamos = () => {
             </label>
             <select
               value={estado}
-              onChange={(e) => setEstado(e.target.value)}
+              onChange={(e) => {
+                setEstado(e.target.value);
+                if (selectedLoan) {
+                  fetchInstallments(selectedLoan, e.target.value);
+                }
+              }}
               className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
             >
               <option value="">TODOS</option>
@@ -519,7 +542,7 @@ const FiltrarPrestamos = () => {
               value={selectedAsesor}
               onChange={(e) => {
                 setSelectedAsesor(e.target.value);
-                setSelectedGroup('');
+                setSelectedGroup(null);
                 setIsGroupSearch(false);
                 setSelectedClient('');
                 setSelectedLoan('');
@@ -576,7 +599,7 @@ const FiltrarPrestamos = () => {
               type="text"
               value={clientSearch}
               onChange={(e) => {
-                setClientSearch(e.target.value.toUpperCase()); // Convert input to uppercase
+                setClientSearch(e.target.value.toUpperCase());
                 setClientPage(1);
               }}
               placeholder="Buscar cliente en esta página..."
@@ -628,7 +651,7 @@ const FiltrarPrestamos = () => {
             </>
           ) : (
             !loading && (
-              <div className="bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-red-200">
+              <div className="bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200">
                 No se encontraron clientes para los filtros seleccionados.
               </div>
             )
@@ -672,14 +695,14 @@ const FiltrarPrestamos = () => {
                 </h4>
                 <p className="text-sm text-gray-600 mt-1">Abonado Por: {loan.abonado_por || 'N/A'}</p>
                 <p className="text-sm text-gray-600 mt-1">Cliente: {loan.cliente}</p>
-                <p className="text-sm text-gray-600 mt-1">Monto: S/ {parseFloat(loan.monto).toFixed(2)}</p>
-                <p className="text-sm text-gray-600 mt-1">Total: S/ {parseFloat(loan.total).toFixed(2)}</p>
-                <p className="text-sm text-gray-600 mt-1">Cuotas: {loan.cuotas}</p>
-                <p className="text-sm text-gray-600 mt-1">Valor Cuota: S/ {parseFloat(loan.valor_cuota).toFixed(2)}</p>
-                <p className="text-sm text-gray-600 mt-1">Frecuencia: {loan.frecuencia}</p>
+                <p className="text-sm text-gray-600 mt-1">Monto: S/ {parseFloat(loan.monto || 0).toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mt-1">Total: S/ {parseFloat(loan.total || 0).toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mt-1">Cuotas: {loan.cuotas || 0}</p>
+                <p className="text-sm text-gray-600 mt-1">Valor Cuota: S/ {parseFloat(loan.valor_cuota || 0).toFixed(2)}</p>
+                <p className="text-sm text-gray-600 mt-1">Frecuencia: {loan.frecuencia || 'N/A'}</p>
                 <p className="text-sm text-gray-600 mt-1">Fecha Inicio: {formatDate(loan.fecha_inicio)}</p>
                 <p className="text-sm text-gray-600 mt-1">
-                  Estado: <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusStyles(loan.estado)}`}>{loan.estado}</span>
+                  Estado: <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusStyles(loan.estado || 'vigente')}`}>{loan.estado || 'vigente'}</span>
                 </p>
                 <p className="text-sm text-gray-600 mt-1">Asesor: {loan.asesor}</p>
                 <button
@@ -716,18 +739,6 @@ const FiltrarPrestamos = () => {
               </button>
             </div>
           )}
-        </div>
-      )}
-
-      {loading && (
-        <div className="flex justify-center mb-6">
-          <div className="animate-spin h-8 w-8 border-4 border-red-600 border-t-transparent rounded-full"></div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
-          {error}
         </div>
       )}
 
@@ -774,32 +785,32 @@ const FiltrarPrestamos = () => {
                     key={cuota.idCuota}
                     className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition"
                   >
-                    <td className="py-3 px-4">{cuota.cliente_nombre}</td>
-                    <td className="py-3 px-4">{cuota.cliente_dni}</td>
+                    <td className="py-3 px-4">{cuota.cliente_nombre || 'Sin cliente'}</td>
+                    <td className="py-3 px-4">{cuota.cliente_dni || 'Sin DNI'}</td>
                     <td className="py-3 px-4">{cuota.idCuota}</td>
                     <td className="py-3 px-4">{cuota.numero_cuota}</td>
                     <td className="py-3 px-4">{formatDate(cuota.fecha_vencimiento)}</td>
-                    <td className="py-3 px-4">{parseFloat(cuota.capital).toFixed(2)}</td>
-                    <td className="py-3 px-4">{parseFloat(cuota.interes).toFixed(2)}</td>
-                    <td className="py-3 px-4">{cuota.dias_mora}</td>
+                    <td className="py-3 px-4">{parseFloat(cuota.capital || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4">{parseFloat(cuota.interes || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4">{cuota.dias_mora || 0}</td>
                     <td className="py-3 px-4">
-                      S/ {(parseFloat(cuota.mora) || 0).toFixed(2)}
+                      S/ {(parseFloat(cuota.mora || 0)).toFixed(2)}
                       {cuota.mora_reducida > 0 && (
                         <span className="text-xs text-green-600 ml-1">(-{cuota.mora_reducida}%)</span>
                       )}
                     </td>
-                    <td className="py-3 px-4">{parseFloat(cuota.otros).toFixed(2)}</td>
-                    <td className="py-3 px-4">{parseFloat(cuota.monto).toFixed(2)}</td>
+                    <td className="py-3 px-4">{parseFloat(cuota.otros || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4">{parseFloat(cuota.monto || 0).toFixed(2)}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${getStatusStyles(
-                          cuota.estado
+                          cuota.estado || 'vigente'
                         )}`}
                       >
-                        {cuota.estado}
+                        {cuota.estado || 'vigente'}
                       </span>
                     </td>
-                    <td className="py-3 px-4">{cuota.asesor_nombre}</td>
+                    <td className="py-3 px-4">{cuota.asesor_nombre || 'Sin asesor'}</td>
                     <td className="py-3 px-2 text-center">
                       {cuota.estado === 'pagado' && (
                         <button
@@ -839,24 +850,22 @@ const FiltrarPrestamos = () => {
                   <td colSpan="4" className="py-3 px-4">
                     TOTALES
                   </td>
+                  <td className="py-3 px-4"></td>
                   <td className="py-3 px-4">
-                    
+                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.capital || 0), 0).toFixed(2)}
                   </td>
                   <td className="py-3 px-4">
-                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.capital), 0).toFixed(2)}
-                  </td>
-                  <td className="py-3 px-4">
-                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.interes), 0).toFixed(2)}
+                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.interes || 0), 0).toFixed(2)}
                   </td>
                   <td className="py-3 px-4">
                     {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.dias_mora || 0), 0)}
                   </td>
                   <td className="py-3 px-4"></td>
                   <td className="py-3 px-4">
-                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.otros), 0).toFixed(2)}
+                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.otros || 0), 0).toFixed(2)}
                   </td>
                   <td className="py-3 px-4">
-                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.monto), 0).toFixed(2)}
+                    {cuotas.reduce((sum, cuota) => sum + parseFloat(cuota.monto || 0), 0).toFixed(2)}
                   </td>
                   <td className="py-3 px-4"></td>
                   <td className="py-3 px-4"></td>
