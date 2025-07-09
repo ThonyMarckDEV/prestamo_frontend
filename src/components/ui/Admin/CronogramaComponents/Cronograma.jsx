@@ -3,39 +3,21 @@ import { format, parseISO } from 'date-fns';
 import { fetchWithAuth } from '../../../../js/authToken';
 import API_BASE_URL from '../../../../js/urlHelper';
 import FetchWithGif from '../../../../components/Reutilizables/FetchWithGif';
+import GrupoSearch from './GrupoSearch';
+import { toast } from 'react-toastify';
 
 const Cronograma = () => {
   const [isGroupSearch, setIsGroupSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState('');
-  const [groups, setGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [prestamos, setPrestamos] = useState([]);
   const [selectedPrestamo, setSelectedPrestamo] = useState(null);
   const [cuotas, setCuotas] = useState([]);
   const [pdfUrl, setPdfUrl] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Fetch groups on component mount
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/cronograma/grupos`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const data = await response.json();
-        setGroups(data);
-      } catch (err) {
-        setError('Error al cargar grupos');
-      }
-    };
-    fetchGroups();
-  }, []);
 
   // Handle search
   const handleSearch = async () => {
-    setError('');
     setPrestamos([]);
     setSelectedPrestamo(null);
     setCuotas([]);
@@ -43,22 +25,40 @@ const Cronograma = () => {
     setLoading(true);
 
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/cronograma/buscar`, {
+      const endpoint = isGroupSearch
+        ? `${API_BASE_URL}/api/admin/cronograma/buscar-grupo`
+        : `${API_BASE_URL}/api/admin/cronograma/buscar`;
+      const body = isGroupSearch
+        ? { idGrupo: selectedGroup?.idGrupo }
+        : { searchTerm };
+
+      if (isGroupSearch && !selectedGroup?.idGrupo) {
+        toast.error('Debes seleccionar un grupo válido', { autoClose: 5000 });
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetchWithAuth(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          searchTerm: isGroupSearch ? selectedGroup : searchTerm,
-          isGroupSearch,
-        }),
+        body: JSON.stringify(body),
       });
       const responseData = await response.json();
-      if (responseData.message && !responseData.prestamos?.length) {
-        setError(responseData.message);
+
+      if (!response.ok) {
+        throw new Error(responseData.message || responseData.error || 'Error al buscar préstamos');
       }
+
+      if (responseData.message && !responseData.prestamos?.length) {
+        toast.error(responseData.message, { autoClose: 5000 });
+      } else {
+        toast.success('Préstamos cargados correctamente', { autoClose: 5000 });
+      }
+
       const prestamosData = Array.isArray(responseData.prestamos) ? responseData.prestamos : [];
       setPrestamos(prestamosData);
     } catch (err) {
-      setError(err.message || 'Error al buscar préstamos');
+      toast.error(err.message || 'Error al buscar préstamos', { autoClose: 5000 });
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,6 @@ const Cronograma = () => {
   // Handle generate cronograma
   const handleGenerateCronograma = async (prestamoId) => {
     setLoading(true);
-    setError('');
     setCuotas([]);
     setPdfUrl('');
     try {
@@ -81,8 +80,9 @@ const Cronograma = () => {
       const data = await response.json();
       setCuotas(data.cuotas || []);
       setPdfUrl(data.pdf_url || '');
+      toast.success('Cronograma generado correctamente', { autoClose: 5000 });
     } catch (err) {
-      setError(err.message || 'Error al generar el cronograma');
+      toast.error(err.message || 'Error al generar el cronograma', { autoClose: 5000 });
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,11 @@ const Cronograma = () => {
               type="checkbox"
               id="groupSearch"
               checked={isGroupSearch}
-              onChange={() => setIsGroupSearch(!isGroupSearch)}
+              onChange={() => {
+                setIsGroupSearch(!isGroupSearch);
+                setSearchTerm('');
+                setSelectedGroup(null);
+              }}
               className="h-5 w-5 text-red-600 focus:ring-primary-600 border-gray-300 rounded"
             />
             <label htmlFor="groupSearch" className="ml-2 text-sm font-medium text-gray-700">
@@ -128,18 +132,12 @@ const Cronograma = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     SELECCIONAR GRUPO
                   </label>
-                  <select
-                    value={selectedGroup}
-                    onChange={(e) => setSelectedGroup(e.target.value)}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
-                  >
-                    <option value="">SELECCIONE EL GRUPO</option>
-                    {groups.map(group => (
-                      <option key={group.idGrupo} value={group.nombre}>
-                        {group.nombre}
-                      </option>
-                    ))}
-                  </select>
+                  <GrupoSearch
+                    selectedGroup={selectedGroup}
+                    onSelect={setSelectedGroup}
+                    onRemove={() => setSelectedGroup(null)}
+                    errors={null}
+                  />
                 </div>
                 <div className="md:self-end">
                   <button
@@ -162,7 +160,7 @@ const Cronograma = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value.toUpperCase())}
                     placeholder="INGRESE DNI, ID CLIENTE, NOMBRE O APELLIDOS"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600s transition"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
                   />
                 </div>
                 <div className="md:self-end">
@@ -178,13 +176,6 @@ const Cronograma = () => {
             )}
           </div>
         </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
-            {error}
-          </div>
-        )}
 
         {/* Prestamos Table */}
         {prestamos.length > 0 && (
