@@ -3,6 +3,7 @@ import { fetchWithAuth } from '../../../../js/authToken';
 import API_BASE_URL from '../../../../js/urlHelper';
 import Pagination from './Pagination';
 import AdvisorSearch from './AdvisorSearch';
+import { toast } from 'react-toastify';
 
 const Grupos = () => {
   const [grupos, setGrupos] = useState([]);
@@ -10,7 +11,6 @@ const Grupos = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -26,7 +26,6 @@ const Grupos = () => {
   // Fetch groups
   const fetchGrupos = async (page = 1, search = '') => {
     setLoading(true);
-    setError('');
     try {
       const response = await fetchWithAuth(
         `${API_BASE_URL}/api/admin/grupos?page=${page}&per_page=${itemsPerPage}&search=${encodeURIComponent(search)}`,
@@ -35,13 +34,16 @@ const Grupos = () => {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      if (!response.ok) throw new Error('Error al cargar grupos');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al cargar grupos');
+      }
       const data = await response.json();
       setGrupos(data.grupos || []);
       setCurrentPage(data.current_page);
       return data;
     } catch (err) {
-      setError(err.message || 'Error al cargar grupos');
+      toast.error(err.message || 'Error al cargar grupos', { autoClose: 5000 });
       return { total_pages: 1, total_items: 0 };
     } finally {
       setLoading(false);
@@ -74,12 +76,12 @@ const Grupos = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setAdvisorError('');
     setLoading(true);
 
     if (!formData.idAsesor) {
       setAdvisorError('Debes seleccionar un asesor');
+      toast.error('Debes seleccionar un asesor', { autoClose: 5000 });
       setLoading(false);
       return;
     }
@@ -97,7 +99,7 @@ const Grupos = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al guardar grupo');
+        throw new Error(errorData.message || errorData.error || 'Error al guardar grupo');
       }
 
       setFormData({
@@ -111,8 +113,9 @@ const Grupos = () => {
       setEditingId(null);
       setShowForm(false);
       await fetchGrupos(1, searchTerm);
+      toast.success(editingId ? 'Grupo actualizado correctamente' : 'Grupo creado correctamente', { autoClose: 5000 });
     } catch (err) {
-      setError(err.message || 'Error al guardar grupo');
+      toast.error(err.message || 'Error al guardar grupo', { autoClose: 5000 });
     } finally {
       setLoading(false);
     }
@@ -125,7 +128,10 @@ const Grupos = () => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) throw new Error('Error al cargar grupo');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || errorData.error || 'Error al cargar grupo');
+      }
       const data = await response.json();
       setFormData({
         nombre: data.grupo.nombre,
@@ -138,7 +144,7 @@ const Grupos = () => {
       setEditingId(id);
       setShowForm(true);
     } catch (err) {
-      setError(err.message || 'Error al cargar grupo');
+      toast.error(err.message || 'Error al cargar grupo', { autoClose: 5000 });
     }
   };
 
@@ -146,16 +152,19 @@ const Grupos = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('¿Estás seguro de eliminar este grupo?')) return;
     setLoading(true);
-    setError('');
     try {
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/grupos/${id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) throw new Error('Error al eliminar grupo');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al eliminar grupo');
+      }
       await fetchGrupos(currentPage, searchTerm);
+      toast.success('Grupo eliminado correctamente', { autoClose: 5000 });
     } catch (err) {
-      setError(err.message || 'Error al eliminar grupo');
+      toast.error(err.message || 'Error al eliminar grupo', { autoClose: 5000 });
     } finally {
       setLoading(false);
     }
@@ -284,13 +293,6 @@ const Grupos = () => {
                 </button>
               </div>
             </form>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-accent-yellow-50 text-accent-copper-600 p-4 rounded-lg mb-6 border border-accent-yellow-200">
-            {error}
           </div>
         )}
 
