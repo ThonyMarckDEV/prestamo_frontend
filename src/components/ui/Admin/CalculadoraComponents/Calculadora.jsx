@@ -6,7 +6,7 @@ import LoanDetails from './LoanDetails';
 import LoanResults from './LoanResults';
 import AdditionalFields from './AdditionalFields';
 import ConfirmationModal from './ConfirmationModal';
-import AdvisorSearch from './AdvisorSearch';
+import GrupoSearch from './GrupoSearch';
 import { toast } from 'react-toastify';
 import LoadingScreen from '../../../Reutilizables/FetchWithGif';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,8 +14,7 @@ import { calculateLoan } from '../../../../utilities/loanCalculator';
 
 export default function Calculadora() {
   const [isGroupLoan, setIsGroupLoan] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [advisor, setAdvisor] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -133,15 +132,9 @@ export default function Calculadora() {
       }
     });
 
-    if (isGroupLoan) {
-      if (!groupName.trim()) {
-        newErrors.groupName = 'El nombre del grupo es obligatorio';
-        errorMessages.push('Nombre del grupo: El nombre del grupo es obligatorio');
-      }
-      if (!advisor?.idUsuario) {
-        newErrors.asesor = 'Debe seleccionar un asesor';
-        errorMessages.push('Asesor del grupo: Debe seleccionar un asesor');
-      }
+    if (isGroupLoan && !selectedGroup?.idGrupo) {
+      newErrors.grupo = 'Debe seleccionar un grupo válido';
+      errorMessages.push('Grupo: Debe seleccionar un grupo válido');
     }
 
     setErrors(newErrors);
@@ -173,6 +166,7 @@ export default function Calculadora() {
       asesor: 'Asesor',
       idProducto: 'Producto',
       abonado_por: 'Abonado Por',
+      grupo: 'Grupo',
     };
     return labels[field] || field;
   };
@@ -189,22 +183,9 @@ export default function Calculadora() {
     if (confirmAction === 'guardar') {
       setLoading(true);
       try {
-        let groupId = null;
-        if (isGroupLoan) {
-          const groupResponse = await fetchWithAuth(`${API_BASE_URL}/api/admin/grupos`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              nombre: groupName,
-              idAsesor: advisor.idUsuario,
-              fecha_creacion: getCurrentDate(0),
-            }),
-          });
-          const groupData = await groupResponse.json();
-          if (!groupResponse.ok) {
-            throw new Error(groupData.error || 'Error al crear grupo');
-          }
-          groupId = groupData.idGrupo;
+        let groupId = selectedGroup?.idGrupo;
+        if (isGroupLoan && !groupId) {
+          throw new Error('No se ha seleccionado un grupo válido');
         }
 
         const prestamosData = formDataList.map(formData => ({
@@ -220,7 +201,7 @@ export default function Calculadora() {
           fecha: formData.fecha,
           fechaInicio: formData.fechaInicio,
           fechaGeneracion: formData.fechaGeneracion,
-          idAsesor: advisor ? advisor.idUsuario : formData.advisorData?.idUsuario,
+          idAsesor: isGroupLoan ? selectedGroup.idAsesor : formData.advisorData?.idUsuario,
           idProducto: formData.idProducto,
           abonado_por: formData.abonado_por,
         }));
@@ -241,6 +222,7 @@ export default function Calculadora() {
                 const errorMsg = responseData.errors[key][0];
                 const fieldMap = {
                   idCliente: `cliente_${index}`,
+                  idGrupo: `grupo_${index}`,
                   credito: `credito_${index}`,
                   frecuencia: `frecuencia_${index}`,
                   interes: `interes_${index}`,
@@ -251,7 +233,7 @@ export default function Calculadora() {
                   fecha: `fecha_${index}`,
                   fechaInicio: `fechaInicio_${index}`,
                   fechaGeneracion: `fechaGeneracion_${index}`,
-                  idAsesor: isGroupLoan ? 'asesor' : `asesor_${index}`,
+                  idAsesor: isGroupLoan ? 'grupo' : `asesor_${index}`,
                   idProducto: `idProducto_${index}`,
                   abonado_por: `abonado_por_${index}`,
                 };
@@ -309,9 +291,8 @@ export default function Calculadora() {
   };
 
   const handleReset = () => {
-    setGroupName('');
+    setSelectedGroup(null);
     setIsGroupLoan(false);
-    setAdvisor(null);
     setFormDataList([defaultLoanData]);
     setErrors({});
   };
@@ -328,7 +309,7 @@ export default function Calculadora() {
     setFormDataList(prev => prev.filter((_, i) => i !== index));
   };
 
-    return (
+  return (
     <div className="w-full h-full md:min-h-screen overflow-auto pb-16">
       {loading && <LoadingScreen />}
       <div className="bg-neutral-softWhite shadow-lg rounded-lg p-3 sm:p-5 md:py-8 mx-auto w-full border-t-4 border-primary">
@@ -346,8 +327,7 @@ export default function Calculadora() {
                 setIsGroupLoan(e.target.checked);
                 if (!e.target.checked) {
                   setFormDataList([defaultLoanData]);
-                  setGroupName('');
-                  setAdvisor(null);
+                  setSelectedGroup(null);
                 }
               }}
               className="h-5 w-5 text-primary focus:ring-2 focus:ring-primary border-neutral-gray rounded"
@@ -355,36 +335,22 @@ export default function Calculadora() {
             <span className="ml-3 text-sm sm:text-base font-semibold text-neutral-dark">
               CRÉDITO GRUPAL
             </span>
-            {isGroupLoan && (
-              <>
-                <input
-                  type="text"
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                  placeholder="Nombre del grupo"
-                  className={`ml-4 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${errors.groupName ? 'border-primary-800' : 'border-neutral-gray'}`}
-                />
-                {errors.groupName && (
-                  <p className="text-primary-800 text-xs mt-1 ml-4">{errors.groupName}</p>
-                )}
-              </>
-            )}
           </div>
         </div>
 
         {isGroupLoan && (
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-dark">
-              ASESOR DEL GRUPO:
+              GRUPO:
             </label>
-            <AdvisorSearch
-              selectedAdvisor={advisor}
-              onSelect={setAdvisor}
-              onRemove={() => setAdvisor(null)}
-              errors={errors.asesor}
+            <GrupoSearch
+              selectedGroup={selectedGroup}
+              onSelect={setSelectedGroup}
+              onRemove={() => setSelectedGroup(null)}
+              errors={errors.grupo}
             />
-            {errors.asesor && (
-              <p className="text-primary-800 text-xs mt-1">{errors.asesor}</p>
+            {errors.grupo && (
+              <p className="text-primary-800 text-xs mt-1">{errors.grupo}</p>
             )}
           </div>
         )}
@@ -455,7 +421,7 @@ export default function Calculadora() {
                 Object.entries(errors).filter(([key]) => key.endsWith(`_${index}`))
               )}
               isGroupLoan={isGroupLoan}
-              advisor={advisor}
+              advisor={selectedGroup?.asesor}
             />
           </div>
         ))}
