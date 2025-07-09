@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import {
   FaHome, FaBoxOpen, FaCalculator,
-  FaUsers, FaChartBar, FaClipboardList, FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes, FaUserTie, FaFilter, FaMoneyBillAlt
+  FaUsers, FaChartBar, FaClipboardList, 
+  FaCalendarAlt, FaSignOutAlt, FaBars, 
+  FaTimes, FaUserTie, FaFilter, FaMoneyBillAlt,
+  FaLayerGroup
 } from 'react-icons/fa';
 import { logout } from '../js/logout';
 import logo from '../img/logo/Logo_FICSULLANA.png';
@@ -136,6 +139,9 @@ export default function Principal() {
                 </Link>
                 <Link to="/admin/asignar-avales" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
                   ASIGNACIÓN DE AVAL
+                </Link>
+                <Link to="/admin/grupos" className="hover:text-neutral-gray" onClick={() => setSidebarOpen(false)}>
+                  GRUPOS
                 </Link>
               </div>
             )}

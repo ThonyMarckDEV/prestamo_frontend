@@ -35,6 +35,8 @@ import Cronograma from './ui/Admin/Cronograma/CronogramaUI';
 
 import Productos from './ui/Admin/Productos/ProductosUI';
 
+import Grupos from './ui/Admin/Grupos/GruposUI';
+
 //UIS CLIENTE
 
 import EstadosCliente from './ui/Cliente/Estados/EstadosUI';
@@ -113,6 +115,7 @@ function App() {
 
           <Route path="/admin/productos" element={<ProtectedRouteAdmin element={<Productos />} />} />
 
+          <Route path="/admin/grupos" element={<ProtectedRouteAdmin element={<Grupos />} />} />
 
           {/* Rutas para Cliente */}
 
