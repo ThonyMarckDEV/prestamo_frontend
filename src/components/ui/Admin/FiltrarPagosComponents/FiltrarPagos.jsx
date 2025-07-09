@@ -3,20 +3,20 @@ import { format, parseISO } from 'date-fns';
 import { fetchWithAuth } from '../../../../js/authToken';
 import API_BASE_URL from '../../../../js/urlHelper';
 import ReporteFiltroCuotas from './ReporteFiltroCuotas';
+import GrupoSearch from './GrupoSearch';
+import { toast } from 'react-toastify';
 
 const FiltrarPagos = () => {
   const [isGroupSearch, setIsGroupSearch] = useState(false);
   const [busquedaCliente, setBusquedaCliente] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [estado, setEstado] = useState('');
   const [selectedAsesor, setSelectedAsesor] = useState('');
-  const [abonadoPor, setAbonadoPor] = useState(''); // New state for abonado_por
-  const [groups, setGroups] = useState([]);
+  const [abonadoPor, setAbonadoPor] = useState('');
   const [asesores, setAsesores] = useState([]);
   const [cuotas, setCuotas] = useState([]);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingAsesores, setLoadingAsesores] = useState(true);
   const [showReportViewer, setShowReportViewer] = useState(false);
@@ -24,16 +24,8 @@ const FiltrarPagos = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAsesores = async () => {
       try {
-        const groupsResponse = await fetchWithAuth(`${API_BASE_URL}/api/admin/cronograma/grupos`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        if (!groupsResponse.ok) throw new Error('Error al cargar grupos');
-        const groupsData = await groupsResponse.json();
-        setGroups(Array.isArray(groupsData) ? groupsData : []);
-
         setLoadingAsesores(true);
         const asesoresResponse = await fetchWithAuth(`${API_BASE_URL}/api/admin/asesores`, {
           method: 'GET',
@@ -46,33 +38,32 @@ const FiltrarPagos = () => {
           : [];
         setAsesores(validAsesores);
         if (validAsesores.length === 0) {
-          setError('No se encontraron asesores válidos');
+          toast.error('No se encontraron asesores válidos', { autoClose: 5000 });
         }
       } catch (err) {
         console.error('Fetch error:', err);
-        setError('Error al cargar datos');
+        toast.error('Error al cargar asesores', { autoClose: 5000 });
       } finally {
         setLoadingAsesores(false);
       }
     };
-    fetchData();
+    fetchAsesores();
   }, []);
 
   const handleFilter = async () => {
     if (!startDate || !endDate) {
-      setError('Por favor, selecciona ambas fechas.');
+      toast.error('Por favor, selecciona ambas fechas.', { autoClose: 5000 });
       return;
     }
     if (new Date(endDate) < new Date(startDate)) {
-      setError('La fecha de fin debe ser posterior o igual a la fecha de inicio.');
+      toast.error('La fecha de fin debe ser posterior o igual a la fecha de inicio.', { autoClose: 5000 });
       return;
     }
-    if (isGroupSearch && !selectedGroup) {
-      setError('Por favor, selecciona un grupo.');
+    if (isGroupSearch && !selectedGroup?.idGrupo) {
+      toast.error('Por favor, selecciona un grupo.', { autoClose: 5000 });
       return;
     }
 
-    setError('');
     setCuotas([]);
     setLoading(true);
 
@@ -81,10 +72,10 @@ const FiltrarPagos = () => {
         start_date: startDate,
         end_date: endDate,
         ...(estado ? { estado } : {}),
-        ...(isGroupSearch && selectedGroup ? { nombreGrupo: selectedGroup } : {}),
+        ...(isGroupSearch && selectedGroup?.idGrupo ? { idGrupo: selectedGroup.idGrupo } : {}),
         ...(busquedaCliente ? { busquedaCliente } : {}),
         ...(selectedAsesor ? { idAsesor: parseInt(selectedAsesor, 10) } : {}),
-        ...(abonadoPor ? { abonadoPor } : {}), // Include abonadoPor in payload
+        ...(abonadoPor ? { abonadoPor } : {}),
       };
 
       const response = await fetchWithAuth(`${API_BASE_URL}/api/admin/pagos/filtrar`, {
@@ -95,18 +86,18 @@ const FiltrarPagos = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al filtrar pagos');
+        throw new Error(errorData.message || errorData.error || 'Error al filtrar pagos');
       }
 
       const data = await response.json();
       setCuotas(data.cuotas || []);
       if (!data.cuotas.length) {
-        setError(
-          `No se encontraron pagos${estado ? ` con estado "${estado}"` : ''} en el rango de fechas.`
-        );
+        toast.warn(`No se encontraron pagos${estado ? ` con estado "${estado}"` : ''} en el rango de fechas.`, { autoClose: 5000 });
+      } else {
+        toast.success('Pagos filtrados correctamente', { autoClose: 5000 });
       }
     } catch (err) {
-      setError(err.message || 'Error al filtrar pagos');
+      toast.error(err.message || 'Error al filtrar pagos', { autoClose: 5000 });
     } finally {
       setLoading(false);
     }
@@ -115,14 +106,13 @@ const FiltrarPagos = () => {
   const handleClearFilters = () => {
     setIsGroupSearch(false);
     setBusquedaCliente('');
-    setSelectedGroup('');
+    setSelectedGroup(null);
     setStartDate('');
     setEndDate('');
     setEstado('');
     setSelectedAsesor('');
-    setAbonadoPor(''); // Clear abonadoPor filter
+    setAbonadoPor('');
     setCuotas([]);
-    setError('');
     setShowReportViewer(false);
     setShowModal(false);
     setPdfUrl(null);
@@ -191,8 +181,8 @@ const FiltrarPagos = () => {
           endDate={endDate}
           estado={estado}
           dni={busquedaCliente}
-          selectedGroup={selectedGroup}
-          abonadoPor={abonadoPor} // Pass abonadoPor to PaymentReportViewer
+          selectedGroup={selectedGroup?.nombre || ''}
+          abonadoPor={abonadoPor}
           onComplete={handlePDFComplete}
           onPDFGenerated={handlePDFGenerated}
         />
@@ -229,7 +219,11 @@ const FiltrarPagos = () => {
             type="checkbox"
             id="groupSearch"
             checked={isGroupSearch}
-            onChange={() => setIsGroupSearch(!isGroupSearch)}
+            onChange={() => {
+              setIsGroupSearch(!isGroupSearch);
+              setBusquedaCliente('');
+              setSelectedGroup(null);
+            }}
             className="h-5 w-5 text-primary-600 focus:ring-primary-600 border-gray-300 rounded"
           />
           <label htmlFor="groupSearch" className="ml-2 text-sm font-medium text-gray-700">
@@ -243,18 +237,12 @@ const FiltrarPagos = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 SELECCIONAR GRUPO
               </label>
-              <select
-                value={selectedGroup}
-                onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-primary-600 transition"
-              >
-                <option value="">SELECCIONE GRUPO</option>
-                {groups.map(group => (
-                  <option key={group.idGrupo} value={group.nombre}>
-                    {group.nombre}
-                  </option>
-                ))}
-              </select>
+              <GrupoSearch
+                selectedGroup={selectedGroup}
+                onSelect={setSelectedGroup}
+                onRemove={() => setSelectedGroup(null)}
+                errors={null}
+              />
             </div>
           ) : (
             <div className="md:col-span-2">
@@ -306,7 +294,7 @@ const FiltrarPagos = () => {
               <option value="pagado">PAGADO</option>
               <option value="vence_hoy">VENCE HOY</option>
               <option value="vencido">VENCIDO</option>
-              <option value="prepagado">PREPAGADO</option>
+              <option value="preSumado">PREPAGADO</option>
             </select>
           </div>
           <div>
@@ -350,7 +338,7 @@ const FiltrarPagos = () => {
           <div className="md:self-end md:col-span-6 flex flex-col md:flex-row gap-4">
             <button
               onClick={handleFilter}
-              disabled={(!startDate || !endDate || (isGroupSearch && !selectedGroup)) || loading}
+              disabled={(!startDate || !endDate || (isGroupSearch && !selectedGroup?.idGrupo)) || loading}
               className="w-full md:w-auto bg-primary hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105"
             >
               {loading ? 'Filtrando...' : 'Filtrar'}
@@ -369,12 +357,6 @@ const FiltrarPagos = () => {
       {loading && (
         <div className="flex justify-center mb-6">
           <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
-          {error}
         </div>
       )}
 
@@ -430,7 +412,7 @@ const FiltrarPagos = () => {
                   <th className="py-4 px-6">MORA</th>
                   <th className="py-4 px-6">ESTADO</th>
                   <th className="py-4 px-6">ASESOR</th>
-                  <th className="py-4 px-6">ABONADO POR</th> {/* New column */}
+                  <th className="py-4 px-6">ABONADO POR</th>
                   <th className="py-4 px-6">OBSERVACIONES</th>
                 </tr>
               </thead>
@@ -474,7 +456,7 @@ const FiltrarPagos = () => {
                         </span>
                       </td>
                       <td className="py-4 px-6">{cuota.asesor_nombre}</td>
-                      <td className="py-4 px-6">{cuota.abonado_por}</td> {/* New column data */}
+                      <td className="py-4 px-6">{cuota.abonado_por}</td>
                       <td className="py-4 px-6">{cuota.observaciones || '-'}</td>
                     </tr>
                   );
